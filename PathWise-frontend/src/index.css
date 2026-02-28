@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+
+@font-face {
+  font-family: 'Roboto Condensed';
+  src: url('/fonts/Roboto_Condensed-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Montserrat';
+  src: url('fonts/Montserrat-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+.roboto {
+  font-family: 'Roboto Condensed', sans-serif;
+}
+.mont{
+    font-family: 'Montserrat', sans-serif;
+}
+
+.nice{
+  background: linear-gradient(to right, #16a34a,#620ec1);
+
+}
+
+
+ /* bg-gradient-to-r from-green-600 to-emerald-700  */
