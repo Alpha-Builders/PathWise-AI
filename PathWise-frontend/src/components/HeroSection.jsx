@@ -74,9 +74,9 @@ const HeroSection = () => {
           e.target.style.boxShadow = 'none';
         }}
       >
-        <a href="/select-path"><span className="relative z-10 ">
+        <Link to="/select-path"><span className="relative z-10 ">
           Get Started
-        </span></a>
+        </span></Link>
       </button>
 
       {/* PNG Image */}
