@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+
 import {
   Trophy, CheckCircle, XCircle, RotateCcw, ArrowRight,
   Award, Star, Target, TrendingUp, Lightbulb, BookOpen,
@@ -96,10 +97,10 @@ export default function Result() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&display=swap');
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root { --green-core: #22c55e; --green-bright: #4ade80; --green-deep: #15803d; --surface: rgba(255,255,255,0.03); --surface-2: rgba(255,255,255,0.06); --border: rgba(255,255,255,0.08); --border-green: rgba(34,197,94,0.35); --text-primary: #f0fdf4; --text-muted: #6b7280; --bg: #080d0a; }
-        .res-root { min-height: 100vh; background: var(--bg); color: var(--text-primary); font-family: 'DM Sans', sans-serif; position: relative; overflow-x: hidden; }
+        .res-root { min-height: 100vh; background: var(--bg); color: var(--text-primary); font-family: 'Poppins', sans-serif; position: relative; overflow-x: hidden; }
         .res-root::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(34,197,94,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(34,197,94,0.04) 1px, transparent 1px); background-size: 60px 60px; pointer-events: none; z-index: 0; }
         .res-orb { position: fixed; border-radius: 50%; pointer-events: none; filter: blur(130px); z-index: 0; }
         .res-orb-1 { width: 700px; height: 700px; background: radial-gradient(circle, rgba(34,197,94,0.09) 0%, transparent 70%); top: -250px; left: -150px; animation: orb-drift 9s ease-in-out infinite alternate; }
@@ -109,19 +110,19 @@ export default function Result() {
         .res-header { position: relative; z-index: 20; display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; border-bottom: 1px solid var(--border); backdrop-filter: blur(12px); }
         .res-logo { display: flex; align-items: center; gap: 10px; }
         .res-logo-mark { width: 36px; height: 36px; background: linear-gradient(135deg, var(--green-core), var(--green-deep)); border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(34,197,94,0.4); }
-        .res-logo-text { font-family: 'Instrument Serif', serif; font-size: 22px; background: linear-gradient(90deg, #fff, var(--green-bright)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .res-logo-text { font-family: 'Poppins', sans-serif; font-size: 22px; background: linear-gradient(90deg, #fff, var(--green-bright)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
         .res-header-right { display: flex; gap: 8px; align-items: center; }
         .res-icon-btn { position: relative; width: 40px; height: 40px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; color: var(--text-muted); }
         .res-icon-btn:hover { background: var(--surface-2); border-color: var(--border-green); color: var(--green-bright); }
         .res-notif-dot { position: absolute; top: 8px; right: 8px; width: 7px; height: 7px; background: var(--green-core); border-radius: 50%; border: 1.5px solid var(--bg); animation: pulse-dot 2s ease infinite; }
         @keyframes pulse-dot { 0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.5); } 50% { box-shadow: 0 0 0 4px rgba(34,197,94,0); } }
-        .res-premium-btn { display: flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 10px; background: linear-gradient(135deg, var(--green-core), var(--green-deep)); color: #fff; font-size: 12px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; cursor: pointer; transition: all 0.25s ease; border: none; font-family: 'DM Sans', sans-serif; box-shadow: 0 4px 16px rgba(34,197,94,0.3); }
+        .res-premium-btn { display: flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 10px; background: linear-gradient(135deg, var(--green-core), var(--green-deep)); color: #fff; font-size: 12px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; cursor: pointer; transition: all 0.25s ease; border: none; font-family: 'Poppins', sans-serif; box-shadow: 0 4px 16px rgba(34,197,94,0.3); }
         .res-premium-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(34,197,94,0.45); }
         .res-main { position: relative; z-index: 10; max-width: 800px; margin: 0 auto; padding: 64px 40px 80px; }
 
         .res-hero { text-align: center; margin-bottom: 40px; }
         .res-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(34,197,94,0.08); border: 1px solid var(--border-green); border-radius: 100px; padding: 6px 16px; font-size: 12px; font-weight: 500; color: var(--green-bright); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 20px; opacity: 0; animation: fade-up 0.6s 0.1s ease forwards; }
-        .res-headline { font-family: 'Instrument Serif', serif; font-size: clamp(32px, 5vw, 52px); line-height: 1.1; font-weight: 400; color: var(--text-primary); margin-bottom: 10px; opacity: 0; animation: fade-up 0.6s 0.2s ease forwards; }
+        .res-headline { font-family: 'Poppins', sans-serif; font-size: clamp(32px, 5vw, 52px); line-height: 1.1; font-weight: 400; color: var(--text-primary); margin-bottom: 10px; opacity: 0; animation: fade-up 0.6s 0.2s ease forwards; }
         .res-sub { font-size: 14px; color: var(--text-muted); opacity: 0; animation: fade-up 0.6s 0.3s ease forwards; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .res-ai-tag { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 100px; background: rgba(96,165,250,0.1); border: 1px solid rgba(96,165,250,0.3); color: #93c5fd; }
 
@@ -129,8 +130,8 @@ export default function Result() {
         .res-score-card { border-radius: 24px; padding: 40px; text-align: center; margin-bottom: 24px; position: relative; overflow: hidden; opacity: 0; animation: fade-up 0.6s 0.4s ease forwards; }
         .res-score-card::before { content: ''; position: absolute; top: 0; left: 32px; right: 32px; height: 1px; }
         .res-score-icon { width: 68px; height: 68px; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
-        .res-score-num { font-family: 'Instrument Serif', serif; font-size: 80px; line-height: 1; font-weight: 400; margin-bottom: 8px; }
-        .res-score-label { font-family: 'Instrument Serif', serif; font-size: 26px; font-weight: 400; margin-bottom: 8px; }
+        .res-score-num { font-family: 'Poppins', sans-serif; font-size: 80px; line-height: 1; font-weight: 400; margin-bottom: 8px; }
+        .res-score-label { font-family: 'Poppins', sans-serif; font-size: 26px; font-weight: 400; margin-bottom: 8px; }
         .res-score-msg { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
         .res-score-bar { width: 100%; height: 8px; background: rgba(255,255,255,0.06); border-radius: 100px; overflow: hidden; margin-bottom: 8px; }
         .res-score-bar-fill { height: 100%; border-radius: 100px; transition: width 1s ease; }
@@ -143,12 +144,12 @@ export default function Result() {
         /* Feedback loading */
         .res-loading { display: flex; align-items: center; gap: 12px; }
         .res-loading-text { font-size: 14px; color: var(--text-muted); }
-        .res-loading-title { font-family: 'Instrument Serif', serif; font-size: 20px; color: #93c5fd; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
-        .res-error-title { font-family: 'Instrument Serif', serif; font-size: 20px; color: #f87171; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .res-loading-title { font-family: 'Poppins', sans-serif; font-size: 20px; color: #93c5fd; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .res-error-title { font-family: 'Poppins', sans-serif; font-size: 20px; color: #f87171; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
         .res-error-msg { font-size: 13px; color: var(--text-muted); }
 
         /* Feedback sections */
-        .res-feedback-title { font-family: 'Instrument Serif', serif; font-size: 24px; font-weight: 400; color: var(--text-primary); margin-bottom: 24px; display: flex; align-items: center; gap: 10px; }
+        .res-feedback-title { font-family: 'Poppins', sans-serif; font-size: 24px; font-weight: 400; color: var(--text-primary); margin-bottom: 24px; display: flex; align-items: center; gap: 10px; }
         .res-section { margin-bottom: 24px; }
         .res-section:last-child { margin-bottom: 0; }
         .res-section-title { font-size: 13px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 7px; }
@@ -158,13 +159,13 @@ export default function Result() {
         .res-list-icon { flex-shrink: 0; margin-top: 2px; }
         .res-step-num { width: 22px; height: 22px; border-radius: 50%; background: rgba(168,85,247,0.12); border: 1px solid rgba(168,85,247,0.3); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #d8b4fe; flex-shrink: 0; }
         .res-motivation { background: rgba(96,165,250,0.06); border: 1px solid rgba(96,165,250,0.2); border-radius: 16px; padding: 20px; text-align: center; }
-        .res-motivation-text { font-family: 'Instrument Serif', serif; font-size: 18px; font-style: italic; color: #93c5fd; line-height: 1.5; }
+        .res-motivation-text { font-family: 'Poppins', sans-serif; font-size: 18px; font-style: italic; color: #93c5fd; line-height: 1.5; }
 
         /* Actions */
         .res-actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-bottom: 32px; opacity: 0; animation: fade-up 0.6s 0.6s ease forwards; }
-        .res-btn-retake { display: inline-flex; align-items: center; gap: 8px; padding: 14px 30px; border-radius: 14px; background: rgba(96,165,250,0.1); border: 1px solid rgba(96,165,250,0.3); color: #93c5fd; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.25s; font-family: 'DM Sans', sans-serif; }
+        .res-btn-retake { display: inline-flex; align-items: center; gap: 8px; padding: 14px 30px; border-radius: 14px; background: rgba(96,165,250,0.1); border: 1px solid rgba(96,165,250,0.3); color: #93c5fd; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.25s; font-family: 'Poppins', sans-serif; }
         .res-btn-retake:hover { background: rgba(96,165,250,0.18); border-color: rgba(96,165,250,0.5); }
-        .res-btn-continue { display: inline-flex; align-items: center; gap: 8px; padding: 14px 30px; border-radius: 14px; background: linear-gradient(135deg, var(--green-core), var(--green-deep)); color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; border: none; font-family: 'DM Sans', sans-serif; transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); box-shadow: 0 8px 24px rgba(34,197,94,0.35); position: relative; overflow: hidden; }
+        .res-btn-continue { display: inline-flex; align-items: center; gap: 8px; padding: 14px 30px; border-radius: 14px; background: linear-gradient(135deg, var(--green-core), var(--green-deep)); color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; border: none; font-family: 'Poppins', sans-serif; transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); box-shadow: 0 8px 24px rgba(34,197,94,0.35); position: relative; overflow: hidden; }
         .res-btn-continue:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(34,197,94,0.5); }
         .res-btn-continue::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.12), transparent); pointer-events: none; }
         .res-footer { text-align: center; opacity: 0; animation: fade-up 0.6s 0.7s ease forwards; }
@@ -183,15 +184,11 @@ export default function Result() {
           <div className="res-header-right">
             <button className="res-premium-btn"><Sparkles size={12} />Premium</button>
             <button className="res-icon-btn">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-              </svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
               <span className="res-notif-dot" />
             </button>
             <button className="res-icon-btn">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-              </svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             </button>
           </div>
         </header>

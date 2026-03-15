@@ -105,7 +105,7 @@ export const Courselection = () => {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&display=swap');
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -129,7 +129,7 @@ export const Courselection = () => {
           min-height: 100vh;
           background: var(--bg);
           color: var(--text-primary);
-          font-family: 'DM Sans', sans-serif;
+          font-family: 'Poppins', sans-serif;
           position: relative;
           overflow-x: hidden;
         }
@@ -186,7 +186,7 @@ export const Courselection = () => {
           box-shadow: 0 0 20px rgba(34,197,94,0.4);
         }
         .cs-logo-text {
-          font-family: 'Instrument Serif', serif;
+          font-family: 'Poppins', sans-serif;
           font-size: 22px;
           background: linear-gradient(90deg, #fff, var(--green-bright));
           -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
@@ -218,7 +218,7 @@ export const Courselection = () => {
           color: #fff; font-size: 12px; font-weight: 600;
           letter-spacing: 0.8px; text-transform: uppercase;
           cursor: pointer; transition: all 0.25s ease;
-          border: none; font-family: 'DM Sans', sans-serif;
+          border: none; font-family: 'Poppins', sans-serif;
           box-shadow: 0 4px 16px rgba(34,197,94,0.3);
         }
         .cs-premium-btn:hover {
@@ -244,7 +244,7 @@ export const Courselection = () => {
           opacity: 0; animation: fade-up 0.6s 0.1s ease forwards;
         }
         .cs-headline {
-          font-family: 'Instrument Serif', serif;
+          font-family: 'Poppins', sans-serif;
           font-size: clamp(40px, 5.5vw, 68px);
           line-height: 1.08; font-weight: 400; color: var(--text-primary);
           margin-bottom: 18px;
@@ -279,7 +279,7 @@ export const Courselection = () => {
         .cs-search-label {
           text-align: center; margin-bottom: 28px;
           font-size: 18px; font-weight: 400; color: rgba(255,255,255,0.7);
-          font-family: 'Instrument Serif', serif; letter-spacing: 0.2px;
+          font-family: 'Poppins', sans-serif; letter-spacing: 0.2px;
         }
         .cs-search-label span { color: var(--green-bright); font-style: italic; }
 
@@ -308,7 +308,7 @@ export const Courselection = () => {
           width: 100%; padding: 18px 52px 18px 52px;
           background: transparent; border: none; outline: none;
           font-size: 16px; color: var(--text-primary);
-          font-family: 'DM Sans', sans-serif;
+          font-family: 'Poppins', sans-serif;
         }
         .cs-input::placeholder { color: var(--text-muted); }
         .cs-chevron {
@@ -333,7 +333,7 @@ export const Courselection = () => {
           border: 1px solid var(--border-green);
           border-radius: 16px;
           max-height: 260px; overflow-y: auto;
-          z-index: 9999;
+          z-index: 100;
           box-shadow: 0 24px 60px rgba(0,0,0,0.6);
           animation: dropdown-open 0.2s ease forwards;
         }
@@ -351,7 +351,7 @@ export const Courselection = () => {
           background: transparent; border: none; cursor: pointer;
           transition: all 0.15s ease;
           border-bottom: 1px solid rgba(255,255,255,0.04);
-          font-family: 'DM Sans', sans-serif;
+          font-family: 'Poppins', sans-serif;
           display: flex; align-items: center; gap: 10px;
         }
         .cs-dropdown-item:last-child { border-bottom: none; }
@@ -405,7 +405,7 @@ export const Courselection = () => {
           padding: 16px 44px; border-radius: 16px;
           font-size: 15px; font-weight: 600; cursor: pointer;
           transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-          font-family: 'DM Sans', sans-serif; border: none;
+          font-family: 'Poppins', sans-serif; border: none;
           position: relative; overflow: hidden;
         }
         .cs-continue-btn.enabled {
@@ -441,7 +441,7 @@ export const Courselection = () => {
           margin-bottom: 32px;
         }
         .cs-popular-title {
-          font-family: 'Instrument Serif', serif;
+          font-family: 'Poppins', sans-serif;
           font-size: 28px; font-weight: 400; color: var(--text-primary);
         }
         .cs-popular-title em {
@@ -600,7 +600,7 @@ export const Courselection = () => {
               </div>
 
               {isDropdownOpen && (
-                <div className="cs-dropdown  ">
+                <div className="cs-dropdown">
                   {filteredCourses.length > 0
                     ? filteredCourses.map((course, i) => (
                       <button

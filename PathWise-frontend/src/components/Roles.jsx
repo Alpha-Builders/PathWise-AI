@@ -73,7 +73,7 @@ export default function Roles() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&display=swap');
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -94,7 +94,7 @@ export default function Roles() {
           min-height: 100vh;
           background: var(--bg);
           color: var(--text-primary);
-          font-family: 'DM Sans', sans-serif;
+          font-family: 'Poppins', sans-serif;
           position: relative;
           overflow-x: hidden;
         }
@@ -146,36 +146,10 @@ export default function Roles() {
           box-shadow: 0 0 20px rgba(34,197,94,0.4);
         }
         .roles-logo-text {
-          font-family: 'Instrument Serif', serif; font-size: 22px;
+          font-family: 'Poppins', sans-serif; font-size: 22px;
           background: linear-gradient(90deg, #fff, var(--green-bright));
           -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
         }
-        .roles-header-right { display: flex; gap: 8px; align-items: center; }
-        .roles-icon-btn {
-          position: relative; width: 40px; height: 40px;
-          background: var(--surface); border: 1px solid var(--border);
-          border-radius: 12px; display: flex; align-items: center; justify-content: center;
-          cursor: pointer; transition: all 0.2s ease; color: var(--text-muted);
-        }
-        .roles-icon-btn:hover { background: var(--surface-2); border-color: var(--border-green); color: var(--green-bright); }
-        .roles-notif-dot {
-          position: absolute; top: 8px; right: 8px;
-          width: 7px; height: 7px; background: var(--green-core);
-          border-radius: 50%; border: 1.5px solid var(--bg);
-          animation: pulse-dot 2s ease infinite;
-        }
-        @keyframes pulse-dot { 0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.5); } 50% { box-shadow: 0 0 0 4px rgba(34,197,94,0); } }
-        .roles-premium-btn {
-          display: flex; align-items: center; gap: 6px;
-          padding: 8px 16px; border-radius: 10px;
-          background: linear-gradient(135deg, var(--green-core), var(--green-deep));
-          color: #fff; font-size: 12px; font-weight: 600;
-          letter-spacing: 0.8px; text-transform: uppercase;
-          cursor: pointer; transition: all 0.25s ease;
-          border: none; font-family: 'DM Sans', sans-serif;
-          box-shadow: 0 4px 16px rgba(34,197,94,0.3);
-        }
-        .roles-premium-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(34,197,94,0.45); }
 
         /* Main */
         .roles-main {
@@ -196,7 +170,7 @@ export default function Roles() {
           opacity: 0; animation: fade-up 0.6s 0.1s ease forwards;
         }
         .roles-headline {
-          font-family: 'Instrument Serif', serif;
+          font-family: 'Poppins', sans-serif;
           font-size: clamp(34px, 5vw, 58px);
           line-height: 1.1; font-weight: 400; color: var(--text-primary);
           margin-bottom: 16px;
@@ -283,7 +257,7 @@ export default function Roles() {
         }
         .roles-card-title-wrap {}
         .roles-card-name {
-          font-family: 'Instrument Serif', serif;
+          font-family: 'Poppins', sans-serif;
           font-size: 20px; font-weight: 400; color: var(--text-primary);
           line-height: 1.2; margin-bottom: 6px;
         }
@@ -373,7 +347,7 @@ export default function Roles() {
           padding: 12px 28px; border-radius: 14px;
           background: var(--surface); border: 1px solid var(--border);
           color: var(--text-muted); font-size: 14px; font-weight: 500;
-          cursor: pointer; transition: all 0.25s ease; font-family: 'DM Sans', sans-serif;
+          cursor: pointer; transition: all 0.25s ease; font-family: 'Poppins', sans-serif;
         }
         .roles-back-btn:hover { border-color: var(--border-green); color: var(--green-bright); background: var(--surface-2); }
 
@@ -394,23 +368,6 @@ export default function Roles() {
               <Sparkles size={16} color="#fff" />
             </div>
             <span className="roles-logo-text">Pathwise AI</span>
-          </div>
-          <div className="roles-header-right">
-            <button className="roles-premium-btn">
-              <Sparkles size={12} />
-              Premium
-            </button>
-            <button className="roles-icon-btn">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-              </svg>
-              <span className="roles-notif-dot" />
-            </button>
-            <button className="roles-icon-btn">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-              </svg>
-            </button>
           </div>
         </header>
 

@@ -228,17 +228,17 @@ export default function ProjectStage() {
   const WorkspaceView = () => (
     <>
       <style>{`
-        .ws-root { min-height: 100vh; background: #080d0a; font-family: 'DM Sans', sans-serif; }
+        .ws-root { min-height: 100vh; background: #080d0a; font-family: 'Poppins', sans-serif; }
         .ws-root::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(34,197,94,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(34,197,94,0.04) 1px, transparent 1px); background-size: 60px 60px; pointer-events: none; z-index: 0; }
         .ws-header { position: relative; z-index: 20; display: flex; justify-content: space-between; align-items: center; padding: 18px 40px; border-bottom: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(12px); }
-        .ws-back { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 8px 16px; color: rgba(255,255,255,0.6); font-size: 13px; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+        .ws-back { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 8px 16px; color: rgba(255,255,255,0.6); font-size: 13px; cursor: pointer; transition: all 0.2s; font-family: 'Poppins', sans-serif; }
         .ws-back:hover { border-color: rgba(34,197,94,0.35); color: #4ade80; }
         .ws-title-block {}
-        .ws-title { font-family: 'Instrument Serif', serif; font-size: 20px; font-weight: 400; color: #f0fdf4; }
+        .ws-title { font-family: 'Poppins', sans-serif; font-size: 20px; font-weight: 400; color: #f0fdf4; }
         .ws-meta { display: flex; align-items: center; gap: 16px; font-size: 12px; color: #6b7280; margin-top: 3px; }
         .ws-header-actions { display: flex; gap: 10px; }
-        .ws-btn-submit { padding: 10px 22px; border-radius: 12px; background: linear-gradient(135deg, #22c55e, #15803d); color: #fff; font-size: 13px; font-weight: 700; cursor: pointer; border: none; font-family: 'DM Sans', sans-serif; display: flex; align-items: center; gap: 7px; box-shadow: 0 4px 16px rgba(34,197,94,0.35); }
-        .ws-btn-reset { padding: 10px 18px; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); color: rgba(255,255,255,0.5); font-size: 13px; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+        .ws-btn-submit { padding: 10px 22px; border-radius: 12px; background: linear-gradient(135deg, #22c55e, #15803d); color: #fff; font-size: 13px; font-weight: 700; cursor: pointer; border: none; font-family: 'Poppins', sans-serif; display: flex; align-items: center; gap: 7px; box-shadow: 0 4px 16px rgba(34,197,94,0.35); }
+        .ws-btn-reset { padding: 10px 18px; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); color: rgba(255,255,255,0.5); font-size: 13px; cursor: pointer; font-family: 'Poppins', sans-serif; }
         .ws-body { position: relative; z-index: 10; max-width: 1200px; margin: 0 auto; padding: 36px 40px 60px; }
         .ws-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         @media (max-width: 900px) { .ws-grid { grid-template-columns: 1fr; } .ws-body { padding: 24px 20px 40px; } .ws-header { padding: 16px 20px; } }
@@ -259,12 +259,12 @@ export default function ProjectStage() {
         .ws-editor::placeholder { color: #4b5563; }
         .ws-editor-footer { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-top: 1px solid rgba(255,255,255,0.06); background: rgba(0,0,0,0.2); }
         .ws-editor-hint { font-size: 12px; color: #6b7280; }
-        .ws-btn-test { padding: 9px 20px; border-radius: 11px; background: linear-gradient(135deg, #22c55e, #15803d); color: #fff; font-size: 12px; font-weight: 700; cursor: pointer; border: none; font-family: 'DM Sans', sans-serif; display: flex; align-items: center; gap: 6px; transition: all 0.2s; }
+        .ws-btn-test { padding: 9px 20px; border-radius: 11px; background: linear-gradient(135deg, #22c55e, #15803d); color: #fff; font-size: 12px; font-weight: 700; cursor: pointer; border: none; font-family: 'Poppins', sans-serif; display: flex; align-items: center; gap: 6px; transition: all 0.2s; }
         .ws-btn-test:disabled { background: rgba(255,255,255,0.08); color: #4b5563; cursor: not-allowed; }
 
         /* Validation */
         .ws-validation { margin-top: 20px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 28px; }
-        .ws-val-title { font-family: 'Instrument Serif', serif; font-size: 22px; font-weight: 400; color: #f0fdf4; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .ws-val-title { font-family: 'Poppins', sans-serif; font-size: 22px; font-weight: 400; color: #f0fdf4; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
         .ws-val-banner { padding: 18px 20px; border-radius: 16px; margin-bottom: 20px; }
         .ws-val-banner.passed { background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.25); }
         .ws-val-banner.failed { background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.25); }
@@ -455,10 +455,10 @@ export default function ProjectStage() {
     return (
       <>
         <style>{`
-          @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
+          @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&display=swap');
           *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
           :root { --green-core: #22c55e; --green-bright: #4ade80; --green-deep: #15803d; --surface: rgba(255,255,255,0.03); --surface-2: rgba(255,255,255,0.06); --border: rgba(255,255,255,0.08); --border-green: rgba(34,197,94,0.35); --text-primary: #f0fdf4; --text-muted: #6b7280; --bg: #080d0a; }
-          .pv-root { min-height: 100vh; background: var(--bg); color: var(--text-primary); font-family: 'DM Sans', sans-serif; position: relative; overflow-x: hidden; }
+          .pv-root { min-height: 100vh; background: var(--bg); color: var(--text-primary); font-family: 'Poppins', sans-serif; position: relative; overflow-x: hidden; }
           .pv-root::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(34,197,94,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(34,197,94,0.04) 1px, transparent 1px); background-size: 60px 60px; pointer-events: none; z-index: 0; }
           .pv-orb { position: fixed; border-radius: 50%; pointer-events: none; filter: blur(130px); z-index: 0; }
           .pv-orb-1 { width: 700px; height: 700px; background: radial-gradient(circle, rgba(34,197,94,0.09) 0%, transparent 70%); top: -250px; left: -150px; animation: orb-drift 9s ease-in-out infinite alternate; }
@@ -467,21 +467,14 @@ export default function ProjectStage() {
           .pv-header { position: relative; z-index: 20; display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; border-bottom: 1px solid var(--border); backdrop-filter: blur(12px); }
           .pv-logo { display: flex; align-items: center; gap: 10px; }
           .pv-logo-mark { width: 36px; height: 36px; background: linear-gradient(135deg, var(--green-core), var(--green-deep)); border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(34,197,94,0.4); }
-          .pv-logo-text { font-family: 'Instrument Serif', serif; font-size: 22px; background: linear-gradient(90deg, #fff, var(--green-bright)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-          .pv-header-right { display: flex; gap: 8px; align-items: center; }
-          .pv-icon-btn { position: relative; width: 40px; height: 40px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; color: var(--text-muted); }
-          .pv-icon-btn:hover { background: var(--surface-2); border-color: var(--border-green); color: var(--green-bright); }
-          .pv-notif-dot { position: absolute; top: 8px; right: 8px; width: 7px; height: 7px; background: var(--green-core); border-radius: 50%; border: 1.5px solid var(--bg); animation: pv-pulse 2s ease infinite; }
-          @keyframes pv-pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.5); } 50% { box-shadow: 0 0 0 4px rgba(34,197,94,0); } }
-          .pv-premium-btn { display: flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 10px; background: linear-gradient(135deg, var(--green-core), var(--green-deep)); color: #fff; font-size: 12px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; cursor: pointer; transition: all 0.25s ease; border: none; font-family: 'DM Sans', sans-serif; box-shadow: 0 4px 16px rgba(34,197,94,0.3); }
-          .pv-premium-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(34,197,94,0.45); }
+          .pv-logo-text { font-family: 'Poppins', sans-serif; font-size: 22px; background: linear-gradient(90deg, #fff, var(--green-bright)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
           .pv-main { position: relative; z-index: 10; max-width: 1200px; margin: 0 auto; padding: 56px 40px 80px; }
 
           /* Hero row */
           .pv-hero { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-bottom: 48px; flex-wrap: wrap; }
           .pv-hero-left {}
           .pv-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(34,197,94,0.08); border: 1px solid var(--border-green); border-radius: 100px; padding: 6px 16px; font-size: 12px; font-weight: 500; color: var(--green-bright); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 16px; }
-          .pv-headline { font-family: 'Instrument Serif', serif; font-size: clamp(28px, 4vw, 44px); font-weight: 400; color: var(--text-primary); margin-bottom: 8px; line-height: 1.1; }
+          .pv-headline { font-family: 'Poppins', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 400; color: var(--text-primary); margin-bottom: 8px; line-height: 1.1; }
           .pv-headline em { font-style: italic; background: linear-gradient(90deg, var(--green-core), var(--green-bright)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
           .pv-subtext { font-size: 14px; color: var(--text-muted); }
           .pv-hero-right { display: flex; align-items: center; gap: 20px; }
@@ -496,7 +489,7 @@ export default function ProjectStage() {
           /* Level tabs */
           .pv-tabs { display: flex; gap: 10px; margin-bottom: 40px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 20px; padding: 8px; }
           @media (max-width: 700px) { .pv-tabs { flex-direction: column; } .pv-main { padding: 40px 20px 60px; } .pv-header { padding: 16px 20px; } .pv-hero { flex-direction: column; } }
-          .pv-tab { flex: 1; padding: 14px 16px; border-radius: 14px; cursor: pointer; transition: all 0.25s ease; text-align: left; border: 1px solid transparent; background: none; font-family: 'DM Sans', sans-serif; }
+          .pv-tab { flex: 1; padding: 14px 16px; border-radius: 14px; cursor: pointer; transition: all 0.25s ease; text-align: left; border: 1px solid transparent; background: none; font-family: 'Poppins', sans-serif; }
           .pv-tab:disabled { cursor: not-allowed; opacity: 0.5; }
           .pv-tab-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
           .pv-tab-name { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; text-transform: capitalize; }
@@ -509,10 +502,10 @@ export default function ProjectStage() {
           .pv-level-header::before { content: ''; position: absolute; top: 0; left: 24px; right: 24px; height: 1px; }
           .pv-level-inner { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; gap: 16px; }
           .pv-level-icon { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-          .pv-level-title { font-family: 'Instrument Serif', serif; font-size: 26px; font-weight: 400; text-transform: capitalize; margin-bottom: 4px; }
+          .pv-level-title { font-family: 'Poppins', sans-serif; font-size: 26px; font-weight: 400; text-transform: capitalize; margin-bottom: 4px; }
           .pv-level-desc { font-size: 13px; opacity: 0.7; }
           .pv-level-stats { text-align: right; }
-          .pv-level-count { font-size: 24px; font-weight: 700; font-family: 'Instrument Serif', serif; }
+          .pv-level-count { font-size: 24px; font-weight: 700; font-family: 'Poppins', sans-serif; }
           .pv-level-count-label { font-size: 11px; opacity: 0.6; margin-top: 2px; }
           .pv-level-progress-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; }
           .pv-level-bar { height: 6px; border-radius: 100px; overflow: hidden; background: rgba(0,0,0,0.2); }
@@ -520,7 +513,7 @@ export default function ProjectStage() {
           .pv-unlock-banner { margin-top: 20px; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
           .pv-unlock-text { font-size: 13px; color: rgba(255,255,255,0.8); font-weight: 500; }
           .pv-unlock-sub { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 2px; }
-          .pv-btn-unlock { padding: 10px 20px; border-radius: 12px; background: linear-gradient(135deg, var(--green-core), var(--green-deep)); color: #fff; font-size: 13px; font-weight: 700; cursor: pointer; border: none; font-family: 'DM Sans', sans-serif; display: flex; align-items: center; gap: 6px; white-space: nowrap; box-shadow: 0 4px 16px rgba(34,197,94,0.35); }
+          .pv-btn-unlock { padding: 10px 20px; border-radius: 12px; background: linear-gradient(135deg, var(--green-core), var(--green-deep)); color: #fff; font-size: 13px; font-weight: 700; cursor: pointer; border: none; font-family: 'Poppins', sans-serif; display: flex; align-items: center; gap: 6px; white-space: nowrap; box-shadow: 0 4px 16px rgba(34,197,94,0.35); }
 
           /* Project grid */
           .pv-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
@@ -534,7 +527,7 @@ export default function ProjectStage() {
           .pv-project-card.done { border-color: rgba(34,197,94,0.2); background: rgba(34,197,94,0.03); }
 
           .pv-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; gap: 10px; }
-          .pv-card-title { font-family: 'Instrument Serif', serif; font-size: 17px; font-weight: 400; color: var(--text-primary); margin-bottom: 6px; line-height: 1.2; transition: color 0.2s; }
+          .pv-card-title { font-family: 'Poppins', sans-serif; font-size: 17px; font-weight: 400; color: var(--text-primary); margin-bottom: 6px; line-height: 1.2; transition: color 0.2s; }
           .pv-project-card:hover .pv-card-title { color: var(--green-bright); }
           .pv-card-desc { font-size: 12px; color: var(--text-muted); line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
           .pv-card-check { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; }
@@ -555,7 +548,7 @@ export default function ProjectStage() {
 
           /* Empty */
           .pv-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 64px; gap: 12px; }
-          .pv-empty h3 { font-family: 'Instrument Serif', serif; font-size: 22px; font-weight: 400; color: var(--text-muted); }
+          .pv-empty h3 { font-family: 'Poppins', sans-serif; font-size: 22px; font-weight: 400; color: var(--text-muted); }
           .pv-empty p { font-size: 14px; color: #4b5563; }
 
           @keyframes fade-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
@@ -570,20 +563,6 @@ export default function ProjectStage() {
             <div className="pv-logo">
               <div className="pv-logo-mark"><Sparkles size={16} color="#fff" /></div>
               <span className="pv-logo-text">Pathwise AI</span>
-            </div>
-            <div className="pv-header-right">
-              <button className="pv-premium-btn"><Sparkles size={12} />Premium</button>
-              <button className="pv-icon-btn">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-                </svg>
-                <span className="pv-notif-dot" />
-              </button>
-              <button className="pv-icon-btn">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-                </svg>
-              </button>
             </div>
           </header>
 

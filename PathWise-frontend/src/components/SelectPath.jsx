@@ -47,7 +47,7 @@ const SelectPath = () => {
           min-height: 100vh;
           background: #080d0a;
           color: var(--text-primary);
-          font-family: 'DM Sans', sans-serif;
+          font-family: 'Poppins', sans-serif;
           position: relative;
           overflow: hidden;
         }
@@ -110,7 +110,7 @@ const SelectPath = () => {
           box-shadow: 0 0 20px rgba(34,197,94,0.4);
         }
         .sp-logo-text {
-          font-family: 'Instrument Serif', serif;
+          font-family: 'Poppins', sans-serif;
           font-size: 22px;
           letter-spacing: 0.5px;
           background: linear-gradient(90deg, #fff, var(--green-bright));
@@ -179,7 +179,7 @@ const SelectPath = () => {
           animation: fade-up 0.6s 0.2s ease forwards;
         }
         .sp-headline h2 {
-          font-family: 'Instrument Serif', serif;
+          font-family: 'Poppins', sans-serif;
           font-size: clamp(42px, 6vw, 72px);
           line-height: 1.1;
           font-weight: 400;
@@ -283,7 +283,7 @@ const SelectPath = () => {
         }
 
         .sp-card-title {
-          font-family: 'Instrument Serif', serif;
+          font-family: 'Poppins', sans-serif;
           font-size: 32px; font-weight: 400;
           color: var(--text-primary);
           margin-bottom: 10px;
@@ -353,7 +353,7 @@ const SelectPath = () => {
           padding: 16px 40px;
           border-radius: 16px;
           font-size: 15px; font-weight: 600;
-          font-family: 'DM Sans', sans-serif;
+          font-family: 'Poppins', sans-serif;
           cursor: pointer;
           transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
           letter-spacing: 0.2px;

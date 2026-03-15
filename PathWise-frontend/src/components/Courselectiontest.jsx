@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, ChevronDown, BookOpen, ArrowRight, Sparkles, X } from 'lucide-react';
-import { ExpandProfile } from "./ExpandProfile";
+
 import { useNavigate } from 'react-router-dom';
 
 const courses = [
@@ -69,10 +69,10 @@ export const Courselection = () => {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&display=swap');
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root { --green-core: #22c55e; --green-bright: #4ade80; --green-deep: #15803d; --surface: rgba(255,255,255,0.03); --surface-2: rgba(255,255,255,0.06); --border: rgba(255,255,255,0.08); --border-green: rgba(34,197,94,0.35); --text-primary: #f0fdf4; --text-muted: #6b7280; --bg: #080d0a; }
-        .csh-root { min-height: 100vh; background: var(--bg); color: var(--text-primary); font-family: 'DM Sans', sans-serif; position: relative; overflow-x: hidden; }
+        .csh-root { min-height: 100vh; background: var(--bg); color: var(--text-primary); font-family: 'Poppins', sans-serif; position: relative; overflow-x: hidden; }
         .csh-root::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(34,197,94,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(34,197,94,0.04) 1px, transparent 1px); background-size: 60px 60px; pointer-events: none; z-index: 0; }
         .csh-orb { position: fixed; border-radius: 50%; pointer-events: none; filter: blur(130px); z-index: 0; }
         .csh-orb-1 { width: 700px; height: 700px; background: radial-gradient(circle, rgba(34,197,94,0.09) 0%, transparent 70%); top: -250px; left: -150px; animation: orb-drift 9s ease-in-out infinite alternate; }
@@ -82,23 +82,23 @@ export const Courselection = () => {
         .csh-header { position: relative; z-index: 20; display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; border-bottom: 1px solid var(--border); backdrop-filter: blur(12px); }
         .csh-logo { display: flex; align-items: center; gap: 10px; }
         .csh-logo-mark { width: 36px; height: 36px; background: linear-gradient(135deg, var(--green-core), var(--green-deep)); border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(34,197,94,0.4); }
-        .csh-logo-text { font-family: 'Instrument Serif', serif; font-size: 22px; background: linear-gradient(90deg, #fff, var(--green-bright)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .csh-logo-text { font-family: 'Poppins', sans-serif; font-size: 22px; background: linear-gradient(90deg, #fff, var(--green-bright)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
 
         .csh-main { position: relative; z-index: 10; max-width: 860px; margin: 0 auto; padding: 64px 40px 80px; }
 
         /* Greeting hero */
         .csh-hero { text-align: center; margin-bottom: 56px; }
-        .csh-greeting { font-family: 'Instrument Serif', serif; font-size: clamp(36px, 6vw, 68px); font-weight: 400; color: var(--text-primary); line-height: 1.1; margin-bottom: 12px; opacity: 0; animation: fade-up 0.6s 0.1s ease forwards; display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
+        .csh-greeting { font-family: 'Poppins', sans-serif; font-size: clamp(36px, 6vw, 68px); font-weight: 400; color: var(--text-primary); line-height: 1.1; margin-bottom: 12px; opacity: 0; animation: fade-up 0.6s 0.1s ease forwards; display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
         .csh-greeting em { font-style: italic; background: linear-gradient(90deg, var(--green-core), var(--green-bright)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
         .csh-wave { display: inline-block; animation: wave 1.5s ease-in-out infinite; font-style: normal; -webkit-text-fill-color: initial; background: none; }
         @keyframes wave { 0%,100% { transform: rotate(0deg); } 25% { transform: rotate(20deg); } 75% { transform: rotate(-10deg); } }
-        .csh-welcome { font-family: 'Instrument Serif', serif; font-size: clamp(18px, 3vw, 28px); color: var(--green-bright); font-style: italic; margin-bottom: 14px; opacity: 0; animation: fade-up 0.6s 0.2s ease forwards; }
+        .csh-welcome { font-family: 'Poppins', sans-serif; font-size: clamp(18px, 3vw, 28px); color: var(--green-bright); font-style: italic; margin-bottom: 14px; opacity: 0; animation: fade-up 0.6s 0.2s ease forwards; }
         .csh-subtext { font-size: 15px; line-height: 1.7; color: var(--text-muted); max-width: 460px; margin: 0 auto; opacity: 0; animation: fade-up 0.6s 0.3s ease forwards; }
 
         /* Search panel */
         .csh-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 28px; padding: 40px 40px 36px; margin-bottom: 24px; position: relative; overflow: hidden; opacity: 0; animation: fade-up 0.6s 0.4s ease forwards; }
         .csh-panel::before { content: ''; position: absolute; top: 0; left: 32px; right: 32px; height: 1px; background: linear-gradient(90deg, transparent, var(--border-green), transparent); }
-        .csh-panel-label { text-align: center; font-family: 'Instrument Serif', serif; font-size: 20px; font-weight: 400; color: rgba(255,255,255,0.8); margin-bottom: 28px; }
+        .csh-panel-label { text-align: center; font-family: 'Poppins', sans-serif; font-size: 20px; font-weight: 400; color: rgba(255,255,255,0.8); margin-bottom: 28px; }
         .csh-panel-label span { color: var(--green-bright); font-style: italic; }
 
         /* Input */
@@ -107,7 +107,7 @@ export const Courselection = () => {
         .csh-input-box.focused { border-color: var(--border-green); box-shadow: 0 0 0 3px rgba(34,197,94,0.08), 0 8px 32px rgba(0,0,0,0.3); }
         .csh-search-icon { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: var(--text-muted); transition: color 0.3s; pointer-events: none; z-index: 2; }
         .csh-input-box.focused .csh-search-icon { color: var(--green-bright); }
-        .csh-input { width: 100%; padding: 18px 52px; background: transparent; border: none; outline: none; font-size: 16px; color: var(--text-primary); font-family: 'DM Sans', sans-serif; }
+        .csh-input { width: 100%; padding: 18px 52px; background: transparent; border: none; outline: none; font-size: 16px; color: var(--text-primary); font-family: 'Poppins', sans-serif; }
         .csh-input::placeholder { color: var(--text-muted); }
         .csh-chevron { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); color: var(--text-muted); transition: all 0.3s; pointer-events: none; }
         .csh-input-box.focused .csh-chevron { color: var(--green-bright); transform: translateY(-50%) rotate(180deg); }
@@ -119,7 +119,7 @@ export const Courselection = () => {
         @keyframes dropdown-open { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
         .csh-dropdown::-webkit-scrollbar { width: 4px; }
         .csh-dropdown::-webkit-scrollbar-thumb { background: var(--border-green); border-radius: 4px; }
-        .csh-dropdown-item { width: 100%; text-align: left; padding: 14px 20px; font-size: 14px; color: rgba(255,255,255,0.8); background: transparent; border: none; cursor: pointer; transition: all 0.15s; border-bottom: 1px solid rgba(255,255,255,0.04); font-family: 'DM Sans', sans-serif; display: flex; align-items: center; gap: 10px; }
+        .csh-dropdown-item { width: 100%; text-align: left; padding: 14px 20px; font-size: 14px; color: rgba(255,255,255,0.8); background: transparent; border: none; cursor: pointer; transition: all 0.15s; border-bottom: 1px solid rgba(255,255,255,0.04); font-family: 'Poppins', sans-serif; display: flex; align-items: center; gap: 10px; }
         .csh-dropdown-item:last-child { border-bottom: none; }
         .csh-dropdown-item:hover { background: rgba(34,197,94,0.08); color: var(--text-primary); padding-left: 24px; }
         .csh-item-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); flex-shrink: 0; transition: background 0.2s; }
@@ -134,7 +134,7 @@ export const Courselection = () => {
 
         /* CTA */
         .csh-cta-wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 32px; opacity: 0; animation: fade-up 0.6s 0.5s ease forwards; }
-        .csh-continue-btn { display: inline-flex; align-items: center; gap: 10px; padding: 16px 44px; border-radius: 16px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); font-family: 'DM Sans', sans-serif; border: none; position: relative; overflow: hidden; }
+        .csh-continue-btn { display: inline-flex; align-items: center; gap: 10px; padding: 16px 44px; border-radius: 16px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); font-family: 'Poppins', sans-serif; border: none; position: relative; overflow: hidden; }
         .csh-continue-btn.enabled { background: linear-gradient(135deg, var(--green-core), var(--green-deep)); color: #fff; box-shadow: 0 8px 32px rgba(34,197,94,0.35); }
         .csh-continue-btn.enabled:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 14px 40px rgba(34,197,94,0.5); }
         .csh-continue-btn.enabled::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.12), transparent); pointer-events: none; }
@@ -146,7 +146,7 @@ export const Courselection = () => {
 
         /* Popular */
         .csh-popular { margin-top: 64px; opacity: 0; animation: fade-up 0.6s 0.6s ease forwards; }
-        .csh-popular-label { text-align: center; font-family: 'Instrument Serif', serif; font-size: 24px; font-weight: 400; color: var(--text-primary); margin-bottom: 24px; }
+        .csh-popular-label { text-align: center; font-family: 'Poppins', sans-serif; font-size: 24px; font-weight: 400; color: var(--text-primary); margin-bottom: 24px; }
         .csh-popular-label em { font-style: italic; color: var(--green-bright); }
         .csh-pop-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
         @media (max-width: 760px) { .csh-pop-grid { grid-template-columns: repeat(2, 1fr); } }
@@ -171,7 +171,7 @@ export const Courselection = () => {
 
         <header className="csh-header">
           <div className="csh-logo"><div className="csh-logo-mark"><Sparkles size={16} color="#fff" /></div><span className="csh-logo-text">Pathwise AI</span></div>
-          <ExpandProfile />
+        
         </header>
 
         <main className="csh-main">
