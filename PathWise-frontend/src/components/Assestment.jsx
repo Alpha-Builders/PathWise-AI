@@ -1,14 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ExpandProfile } from "./ExpandProfile";
-import { 
-  Brain, 
-  Clock, 
-  Target, 
-  ArrowRight,
-  CheckCircle,
-  AlertCircle
-} from "lucide-react";
+import { Sparkles, Brain, Clock, Target, ArrowRight, CheckCircle, AlertCircle } from "lucide-react";
 
 export default function Assesment() {
   const navigate = useNavigate();
@@ -55,14 +47,48 @@ const createPageUrl = (pageName) => {
   const skillName = skillNames[selectedSkill] || "Programming Skill";
 
   return (
-    <div className="min-h-screen bg-gray-900 py-12 px-4">
-      <div className="max-w-4xl mx-auto">
+    <div style={{ minHeight: '100vh', background: '#080d0a', color: '#f0fdf4', fontFamily: "'DM Sans', sans-serif", position: 'relative' }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
+        :root { --green-core: #22c55e; --green-bright: #4ade80; --green-deep: #15803d; --surface: rgba(255,255,255,0.03); --surface-2: rgba(255,255,255,0.06); --border: rgba(255,255,255,0.08); --border-green: rgba(34,197,94,0.35); --text-primary: #f0fdf4; --text-muted: #6b7280; --bg: #080d0a; }
+        .as-root::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(34,197,94,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(34,197,94,0.04) 1px, transparent 1px); background-size: 60px 60px; pointer-events: none; z-index: 0; }
+        .as-header { position: relative; z-index: 20; display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; border-bottom: 1px solid var(--border); backdrop-filter: blur(12px); }
+        .as-logo { display: flex; align-items: center; gap: 10px; }
+        .as-logo-mark { width: 36px; height: 36px; background: linear-gradient(135deg, var(--green-core), var(--green-deep)); border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(34,197,94,0.4); }
+        .as-logo-text { font-family: 'Instrument Serif', serif; font-size: 22px; background: linear-gradient(90deg, #fff, var(--green-bright)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .as-header-right { display: flex; gap: 8px; align-items: center; }
+        .as-icon-btn { position: relative; width: 40px; height: 40px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; color: var(--text-muted); }
+        .as-icon-btn:hover { background: var(--surface-2); border-color: var(--border-green); color: var(--green-bright); }
+        .as-notif-dot { position: absolute; top: 8px; right: 8px; width: 7px; height: 7px; background: var(--green-core); border-radius: 50%; border: 1.5px solid var(--bg); animation: as-pulse 2s ease infinite; }
+        @keyframes as-pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.5); } 50% { box-shadow: 0 0 0 4px rgba(34,197,94,0); } }
+        .as-premium-btn { display: flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 10px; background: linear-gradient(135deg, var(--green-core), var(--green-deep)); color: #fff; font-size: 12px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; cursor: pointer; transition: all 0.25s ease; border: none; font-family: 'DM Sans', sans-serif; box-shadow: 0 4px 16px rgba(34,197,94,0.3); }
+        .as-premium-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(34,197,94,0.45); }
+        @keyframes fade-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 640px) { .as-header { padding: 16px 20px; } }
+      `}</style>
+
+      <div className="as-root" style={{ minHeight: '100vh', background: '#080d0a' }}>
         {/* Header */}
-        <div className="text-center mb-12">
-          <div className="flex justify-between items-center mb-12">
-                <h1 className="text-2xl font-bold text-white">PATHWISE AI</h1>
-                <ExpandProfile />
-            </div>
+        <header className="as-header">
+          <div className="as-logo">
+            <div className="as-logo-mark"><Sparkles size={16} color="#fff" /></div>
+            <span className="as-logo-text">Pathwise AI</span>
+          </div>
+          <div className="as-header-right">
+            <button className="as-premium-btn"><Sparkles size={12} />Premium</button>
+            <button className="as-icon-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+              </svg>
+              <span className="as-notif-dot" />
+            </button>
+            <button className="as-icon-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+              </svg>
+            </button>
+          </div>
+        </header>
           
           <h1 className="text-5xl  font-bold text-white mb-6">
             Skill Assessment Ready! 🎯
@@ -156,7 +182,7 @@ const createPageUrl = (pageName) => {
             <span className="text-sm font-medium">You've got this! Take your time and trust your knowledge.</span>
           </div>
         </div>
-      </div>
     </div>
+    
   );
 }
