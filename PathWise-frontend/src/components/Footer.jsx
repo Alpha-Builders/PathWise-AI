@@ -15,7 +15,7 @@ const Footer = () => {
             <span className="text-xl font-bold text-[#019438]">Pathwise AI</span>
           </div>
           <p className="mb-4">
-            AI-powered assistant helping Nigerian vendors grow their businesses smarter.
+            AI-powered assistant helping High-school graduates, Undergraduates, Uni Graduates and Self Learners Discover their career path.
           </p>
           <div className="flex space-x-4">
             <a
