@@ -11,7 +11,11 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Close menu on route-like navigation
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [menuOpen]);
+
   const closeMenu = () => setMenuOpen(false);
 
   const links = [
@@ -24,15 +28,14 @@ const Navbar = () => {
     <>
       <header className={`navbar-root ${scrolled ? 'navbar-scrolled' : ''}`}>
         <nav className="navbar-inner">
-          {/* Gradient border */}
           <div className="navbar-border" />
 
           {/* Logo */}
           <Link to="/" className="navbar-logo" onClick={closeMenu}>
             <span className="logo-icon">
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                <path d="M9 2L15 6V12L9 16L3 12V6L9 2Z" stroke="#00a73e" strokeWidth="1.5" fill="none"/>
-                <circle cx="9" cy="9" r="2.5" fill="#00a73e" opacity="0.8"/>
+                <path d="M9 2L15 6V12L9 16L3 12V6L9 2Z" stroke="#4ade80" strokeWidth="1.5" fill="none"/>
+                <circle cx="9" cy="9" r="2.5" fill="#4ade80" opacity="0.8"/>
               </svg>
             </span>
             <span className="logo-text">PathWise<span className="logo-ai"> AI</span></span>
@@ -42,9 +45,7 @@ const Navbar = () => {
           <ul className="navbar-links">
             {links.map(({ label, href }) => (
               <li key={label}>
-                <a href={href} className="nav-link">
-                  {label}
-                </a>
+                <a href={href} className="nav-link">{label}</a>
               </li>
             ))}
           </ul>
@@ -90,18 +91,24 @@ const Navbar = () => {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600&display=swap');
 
+        /* ── Root ── */
         .navbar-root {
           position: fixed;
           top: 0; left: 0; right: 0;
           z-index: 1000;
-          padding: 20px 24px 0;
+          padding: 0;
           font-family: 'Geist', sans-serif;
-          transition: padding 0.4s cubic-bezier(0.16,1,0.3,1);
+          /* Always solid — no transparency */
+          background: #071a0f;
+          border-bottom: 1px solid rgba(0, 167, 62, 0.18);
+          transition: box-shadow 0.3s, border-color 0.3s;
         }
         .navbar-scrolled {
-          padding: 10px 24px 0;
+          box-shadow: 0 4px 32px rgba(0, 0, 0, 0.5);
+          border-color: rgba(0, 167, 62, 0.3);
         }
 
+        /* ── Inner ── */
         .navbar-inner {
           position: relative;
           max-width: 1100px;
@@ -109,32 +116,15 @@ const Navbar = () => {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding: 12px 24px;
-          border-radius: 16px;
-          background: rgba(10, 17, 32, 0.7);
-          backdrop-filter: blur(16px);
-          -webkit-backdrop-filter: blur(16px);
-          transition: background 0.4s, box-shadow 0.4s;
-        }
-        .navbar-scrolled .navbar-inner {
-          background: rgba(8, 14, 26, 0.88);
-          box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+          padding: 13px 24px;
         }
 
-        /* gradient border */
+        /* gradient border accent (bottom only on mobile) */
         .navbar-border {
-          position: absolute;
-          inset: 0;
-          border-radius: 16px;
-          padding: 1px;
-          background: linear-gradient(160deg, rgba(180,180,180,0.18) 0%, rgba(0,148,56,0.45) 100%);
-          -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-          -webkit-mask-composite: xor;
-          mask-composite: exclude;
-          pointer-events: none;
+          display: none;
         }
 
-        /* Logo */
+        /* ── Logo ── */
         .navbar-logo {
           display: flex;
           align-items: center;
@@ -148,8 +138,8 @@ const Navbar = () => {
           justify-content: center;
           width: 30px; height: 30px;
           border-radius: 8px;
-          background: rgba(0,167,62,0.1);
-          border: 1px solid rgba(0,167,62,0.2);
+          background: rgba(74, 222, 128, 0.12);
+          border: 1px solid rgba(74, 222, 128, 0.25);
           flex-shrink: 0;
         }
         .logo-text {
@@ -164,7 +154,7 @@ const Navbar = () => {
           font-style: italic;
         }
 
-        /* Desktop nav links */
+        /* ── Desktop nav links ── */
         .navbar-links {
           display: flex;
           align-items: center;
@@ -180,18 +170,18 @@ const Navbar = () => {
           padding: 7px 14px;
           font-size: 0.88rem;
           font-weight: 400;
-          color: rgba(255,255,255,0.5);
+          color: rgba(255,255,255,0.55);
           text-decoration: none;
           border-radius: 8px;
           transition: color 0.2s, background 0.2s;
           white-space: nowrap;
         }
         .nav-link:hover {
-          color: rgba(255,255,255,0.9);
-          background: rgba(255,255,255,0.05);
+          color: #fff;
+          background: rgba(74, 222, 128, 0.08);
         }
 
-        /* CTA */
+        /* ── CTA ── */
         .navbar-cta {
           display: flex;
           align-items: center;
@@ -202,15 +192,15 @@ const Navbar = () => {
           padding: 7px 14px;
           font-size: 0.88rem;
           font-weight: 400;
-          color: rgba(255,255,255,0.5);
+          color: rgba(255,255,255,0.55);
           text-decoration: none;
           border-radius: 8px;
           transition: color 0.2s, background 0.2s;
           white-space: nowrap;
         }
         .btn-ghost:hover {
-          color: rgba(255,255,255,0.9);
-          background: rgba(255,255,255,0.05);
+          color: #fff;
+          background: rgba(74, 222, 128, 0.08);
         }
         .btn-launch {
           position: relative;
@@ -242,7 +232,7 @@ const Navbar = () => {
           pointer-events: none;
         }
 
-        /* Hamburger */
+        /* ── Hamburger ── */
         .hamburger {
           display: none;
           flex-direction: column;
@@ -250,13 +240,18 @@ const Navbar = () => {
           background: none;
           border: none;
           cursor: pointer;
-          padding: 4px;
+          padding: 6px;
+          border-radius: 8px;
           z-index: 10;
+          transition: background 0.2s;
+        }
+        .hamburger:hover {
+          background: rgba(74, 222, 128, 0.08);
         }
         .hamburger span {
           display: block;
           width: 22px; height: 1.5px;
-          background: rgba(255,255,255,0.65);
+          background: rgba(255,255,255,0.75);
           border-radius: 2px;
           transition: transform 0.3s, opacity 0.3s, width 0.3s;
           transform-origin: center;
@@ -265,76 +260,80 @@ const Navbar = () => {
         .hamburger-open span:nth-child(2) { opacity: 0; width: 0; }
         .hamburger-open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
 
-        /* Mobile drawer */
+        /* ── Mobile drawer ── */
         .mobile-drawer {
-          max-width: 1100px;
-          margin: 0 auto;
+          background: #071a0f;
+          border-top: 1px solid rgba(74, 222, 128, 0.1);
           overflow: hidden;
           max-height: 0;
           transition: max-height 0.4s cubic-bezier(0.16,1,0.3,1), opacity 0.3s;
           opacity: 0;
         }
         .drawer-open {
-          max-height: 320px;
+          max-height: 340px;
           opacity: 1;
         }
         .drawer-links {
           list-style: none;
-          margin: 0; padding: 12px 24px 0;
+          margin: 0;
+          padding: 8px 20px 0;
           display: flex;
           flex-direction: column;
-          gap: 2px;
+          gap: 0;
         }
         .drawer-link {
           display: block;
-          padding: 11px 4px;
+          padding: 13px 4px;
           font-size: 0.95rem;
-          color: rgba(255,255,255,0.55);
+          color: rgba(255,255,255,0.6);
           text-decoration: none;
-          border-bottom: 1px solid rgba(255,255,255,0.05);
+          border-bottom: 1px solid rgba(255,255,255,0.06);
           transition: color 0.2s;
         }
         .drawer-link:hover { color: #fff; }
         .drawer-actions {
           display: flex;
           gap: 10px;
-          padding: 16px 24px 24px;
+          padding: 16px 20px 24px;
         }
         .drawer-ghost {
           flex: 1;
           text-align: center;
-          padding: 11px;
+          padding: 12px;
           font-size: 0.9rem;
-          color: rgba(255,255,255,0.5);
+          color: rgba(255,255,255,0.6);
           text-decoration: none;
-          border: 1px solid rgba(255,255,255,0.1);
+          border: 1px solid rgba(255,255,255,0.12);
           border-radius: 10px;
-          transition: color 0.2s, background 0.2s;
+          transition: color 0.2s, background 0.2s, border-color 0.2s;
         }
-        .drawer-ghost:hover { color: #fff; background: rgba(255,255,255,0.05); }
+        .drawer-ghost:hover {
+          color: #fff;
+          background: rgba(74, 222, 128, 0.06);
+          border-color: rgba(74, 222, 128, 0.25);
+        }
         .drawer-launch {
           flex: 1;
           text-align: center;
-          padding: 11px;
+          padding: 12px;
           font-size: 0.9rem;
           font-weight: 500;
           color: #fff;
           text-decoration: none;
           background: linear-gradient(135deg, #00a73e, #00c44a);
           border-radius: 10px;
-          transition: opacity 0.2s;
+          transition: opacity 0.2s, transform 0.2s;
         }
-        .drawer-launch:hover { opacity: 0.9; }
+        .drawer-launch:hover { opacity: 0.9; transform: translateY(-1px); }
 
-        /* Responsive */
+        /* ── Responsive ── */
         @media (max-width: 768px) {
           .navbar-links { display: none; }
-          .navbar-cta { display: none; }
-          .hamburger { display: flex; }
+          .navbar-cta   { display: none; }
+          .hamburger    { display: flex; }
         }
         @media (max-width: 480px) {
-          .navbar-root { padding: 12px 16px 0; }
-          .navbar-inner { padding: 10px 16px; }
+          .navbar-inner { padding: 11px 16px; }
         }
       `}</style>
     </>
