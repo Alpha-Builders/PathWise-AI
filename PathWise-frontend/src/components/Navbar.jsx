@@ -177,7 +177,7 @@ const Navbar = () => {
               ) : (
                 <>
                   <Link to="/auth" className="btn-ghost">Sign In</Link>
-                  <Link to="/select-path" className="btn-launch">
+                  <Link to="/register" className="btn-launch">
                     <span>Launch</span>
                     <span className="btn-launch-arrow">→</span>
                     <div className="btn-launch-shine" />

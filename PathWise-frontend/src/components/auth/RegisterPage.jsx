@@ -159,7 +159,7 @@ const RegisterPage = () => {
 
           <p className="text-gray-300 text-center mt-5">
             Already have an account?{' '}
-            <Link to="/login" className="text-green-400 hover:text-green-300">Login</Link>
+            <Link to="/auth" className="text-green-400 hover:text-green-300">Login</Link>
           </p>
         </div>
       </div>
