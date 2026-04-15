@@ -52,7 +52,7 @@ const Navbar = () => {
 
           {/* CTA */}
           <div className="navbar-cta">
-            <a href="/auth" className="btn-ghost">Sign In</a>
+            <Link to="/auth" className="btn-ghost">Sign In</Link>
             <Link to="/select-path" className="btn-launch">
               <span>Launch</span>
               <span className="btn-launch-arrow">→</span>
