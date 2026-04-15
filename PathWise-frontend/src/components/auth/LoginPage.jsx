@@ -18,7 +18,7 @@ const LoginPage = () => {
 
     setLoading(true);
     try {
-      const res = await fetch('https://pathwisejwt.up.railway.app', {
+      const res = await fetch('https://pathwisejwt.up.railway.app/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
