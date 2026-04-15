@@ -18,7 +18,7 @@ const LoginPage = () => {
 
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:1180/api/users/login', {
+      const res = await fetch('http://localhost:8000/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -29,13 +29,13 @@ const LoginPage = () => {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || 'Login failed.');
+        throw new Error(data.message || data.detail || 'Login failed.');
       }
 
-      // Store token or session
+      // Store token
       localStorage.setItem('token', data.token);
 
-      // Redirect to course-selection
+      // Redirect
       navigate('/select-path');
     } catch (err) {
       setError(err.message);
@@ -86,22 +86,6 @@ const LoginPage = () => {
           zIndex: 10
         }}
       >
-        <div
-          className="absolute pointer-events-none"
-          style={{
-            top: '0',
-            left: '0',
-            right: '0',
-            bottom: '0',
-            borderRadius: '17px',
-            padding: '1px',
-            background: 'linear-gradient(to bottom, #aaa 0%, #019438 100%)',
-            WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-            WebkitMaskComposite: 'xor',
-            mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-            maskComposite: 'exclude'
-          }}
-        />
         <div className="text-green-400 font-bold text-xl relative z-10">
           PathWise AI
         </div>
@@ -121,22 +105,6 @@ const LoginPage = () => {
             borderRadius: '20px',
           }}
         >
-          <div
-            className="absolute pointer-events-none"
-            style={{
-              top: '0',
-              left: '0',
-              right: '0',
-              bottom: '0',
-              borderRadius: '20px',
-              padding: '1px',
-              background: 'linear-gradient(to bottom, #aaa 0%, #019438 100%)',
-              WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-              WebkitMaskComposite: 'xor',
-              mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-              maskComposite: 'exclude'
-            }}
-          />
           <div className="text-center mb-8 relative z-10">
             <h1 className="text-2xl font-bold text-white mb-2">Welcome Back</h1>
             <p className="text-gray-300">Sign in to your PathWise AI account</p>
@@ -144,15 +112,15 @@ const LoginPage = () => {
 
           <div className="space-y-6 relative z-10">
             {error && <p className="text-red-400 text-sm">{error}</p>}
-            <div>
-              <input
-                type="email"
-                placeholder="Email Address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 bg-transparent border border-green-400 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-green-300 transition-colors duration-200"
-              />
-            </div>
+
+            <input
+              type="email"
+              placeholder="Email Address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-3 bg-transparent border border-green-400 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-green-300 transition-colors duration-200"
+            />
+
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
@@ -161,34 +129,23 @@ const LoginPage = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-3 pr-12 bg-transparent border border-green-400 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-green-300 transition-colors duration-200"
               />
-              {/* Eye toggle — unchanged */}
+
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-green-400 transition-colors duration-200"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-green-400"
               >
-                {showPassword ? (
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M2.99902 3L20.999 21M9.8433 9.91364C9.32066 10.4536 8.99902 11.1892 8.99902 12C8.99902 13.6569 10.3422 15 11.999 15C12.8215 15 13.5667 14.669 14.1086 14.133M6.49902 6.64715C4.59972 7.90034 3.15305 9.78394 2.45703 12C3.73128 16.0571 7.52159 19 11.9992 19C13.9881 19 15.8414 18.4194 17.3988 17.4184M10.999 5.04939C11.328 5.01673 11.6617 5 11.9992 5C16.4769 5 20.2672 7.94291 21.5414 12C21.2607 12.894 20.8577 13.7338 20.3522 14.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                ) : (
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 5C7.52246 5 3.73226 7.94288 2.45801 12C3.73226 16.0571 7.52246 19 12 19C16.4775 19 20.2677 16.0571 21.542 12C20.2677 7.94288 16.4775 5 12 5Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                )}
+                👁
               </button>
             </div>
-            <div className="flex justify-end">
-              <a href="/forgot-password" className="text-green-400 hover:text-green-300 text-sm font-medium">
-                Forgot Password?
-              </a>
-            </div>
+
             <button
               type="button"
               onClick={handleLogin}
               disabled={loading}
-              className={`w-full py-3 rounded-lg text-white font-medium transition-colors duration-200 ${loading ? 'bg-green-300 cursor-not-allowed' : 'bg-green-500 hover:bg-green-400'}`}
+              className={`w-full py-3 rounded-lg text-white font-medium transition-colors duration-200 ${
+                loading ? 'bg-green-300 cursor-not-allowed' : 'bg-green-500 hover:bg-green-400'
+              }`}
             >
               {loading ? 'Signing In...' : 'Sign In'}
             </button>
