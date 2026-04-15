@@ -2,6 +2,8 @@ from core.database import Base
 from fastapi import FastAPI
 from routers import auth
 from fastapi.middleware.cors import CORSMiddleware
+from core.database import Base, engine
+from db.models.models import User
 
 
 
@@ -11,9 +13,22 @@ app = FastAPI(
     version="1.0.0",
 )
 
+
+
+from fastapi import FastAPI
+  # ensure models are loaded
+
+app = FastAPI()
+
+@app.on_event("startup")
+def startup():
+    Base.metadata.create_all(bind=engine)
+
+
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins="http://localhost:5173",
+    allow_origins="https://path-wise-ai-bmq2.vercel.app",
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["Authorization", "Content-Type"],
