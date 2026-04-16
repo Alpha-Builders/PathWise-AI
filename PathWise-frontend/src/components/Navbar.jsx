@@ -215,7 +215,7 @@ const Navbar = () => {
             ) : (
               <>
                 <Link to="/auth" className="drawer-ghost" onClick={closeMenu}>Sign In</Link>
-                <Link to="/select-path" className="drawer-launch" onClick={closeMenu}>Launch →</Link>
+                <Link to="/register" className="drawer-launch" onClick={closeMenu}>Launch →</Link>
               </>
             )}
           </div>
