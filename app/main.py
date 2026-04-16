@@ -24,11 +24,13 @@ app = FastAPI()
 def startup():
     Base.metadata.create_all(bind=engine)
 
-
+origins = [
+    "http://localhost:5173",
+]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins="https://path-wise-ai-bmq2.vercel.app",
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["Authorization", "Content-Type"],

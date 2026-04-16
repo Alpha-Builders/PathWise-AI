@@ -2,7 +2,7 @@ import jwt
 import time
 import os
 from dotenv import load_dotenv
-
+import datetime
 load_dotenv()
 
 
@@ -28,6 +28,4 @@ class AuthHandler(object):
     except:
       print("Unable to decode the token. Invalid token.")
       return {} # This is to handle the case when the token is invalid. It returns an empty dictionary.
-
-
 

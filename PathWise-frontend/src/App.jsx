@@ -19,6 +19,10 @@ import Result from './components/Result';
 import Test from './components/Test';
 import Project from './components/Projects';
 import HighSchoolPath from './components/HighSchoolPath';
+import ProfilePage from './components/ProfilePage' // adjust path as needed
+
+
+
 
 // Page transition animation wrapper
 const AnimatedPageWrapper = ({ children }) => {
@@ -68,6 +72,7 @@ const AnimatedRoutes = () => {
 
         {/* App routes — no Navbar + Footer */}
         <Route path="/select-path" element={<AnimatedPageWrapper><SelectPath /></AnimatedPageWrapper>} />
+        <Route path="/profile" element={<ProfilePage />} />
         <Route path="/course-selection" element={<AnimatedPageWrapper><Courselection /></AnimatedPageWrapper>} />
         <Route path="/highschool-path" element={<AnimatedPageWrapper><HighSchoolPath /></AnimatedPageWrapper>} />
         <Route path="/career-path" element={<AnimatedPageWrapper><CareerPathPage /></AnimatedPageWrapper>} />
