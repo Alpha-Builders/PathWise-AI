@@ -63,17 +63,12 @@ const HeroSection = () => {
   return (
     <section className="hero-section">
       <canvas ref={canvasRef} className="hero-canvas" />
-
-      {/* Atmospheric blobs */}
       <div className="blob blob-1" />
       <div className="blob blob-2" />
       <div className="blob blob-3" />
-
-      {/* Grid overlay */}
       <div className="grid-overlay" />
 
       <div className="hero-content">
-        {/* Badge */}
         <div className="hero-badge">
           <span className="badge-dot" />
           <span>AI-Powered Career Intelligence</span>
@@ -93,7 +88,7 @@ const HeroSection = () => {
         </p>
 
         <div className="hero-actions">
-          <Link to="/select-path" className="btn-primary">
+          <Link to="/register" className="btn-primary">
             <span className="btn-label">Get Started Free</span>
             <span className="btn-arrow">→</span>
             <div className="btn-shine" />
@@ -104,7 +99,6 @@ const HeroSection = () => {
           </button>
         </div>
 
-        {/* Video Modal */}
         {videoOpen && (
           <div className="video-overlay" onClick={() => setVideoOpen(false)}>
             <div className="video-modal" onClick={e => e.stopPropagation()}>
@@ -135,15 +129,10 @@ const HeroSection = () => {
         </div>
       </div>
 
-      {/* Hero image */}
       <div className="hero-image-container">
         <div className="image-glow" />
         <div className="image-frame">
-          <img
-            src="/images/journey.png"
-            alt="Career journey illustration"
-            className="hero-image"
-          />
+          <img src="/images/journey.png" alt="Career journey illustration" className="hero-image" />
         </div>
       </div>
 
@@ -162,7 +151,6 @@ const HeroSection = () => {
           padding: 80px 24px 0;
           font-family: 'Geist', sans-serif;
         }
-
         .hero-canvas {
           position: absolute;
           inset: 0;
@@ -170,7 +158,6 @@ const HeroSection = () => {
           height: 100%;
           z-index: 1;
         }
-
         .grid-overlay {
           position: absolute;
           inset: 0;
@@ -181,7 +168,6 @@ const HeroSection = () => {
           z-index: 1;
           mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);
         }
-
         .blob {
           position: absolute;
           border-radius: 50%;
@@ -189,34 +175,14 @@ const HeroSection = () => {
           pointer-events: none;
           z-index: 1;
         }
-        .blob-1 {
-          width: 500px; height: 250px;
-          background: #014d22;
-          top: 10%; left: 5%;
-          opacity: 0.35;
-          animation: blobFloat 8s ease-in-out infinite;
-        }
-        .blob-2 {
-          width: 400px; height: 200px;
-          background: #016b2e;
-          top: 55%; right: 5%;
-          opacity: 0.25;
-          animation: blobFloat 10s ease-in-out infinite reverse;
-        }
-        .blob-3 {
-          width: 300px; height: 150px;
-          background: #00a73e;
-          bottom: 15%; left: 30%;
-          opacity: 0.12;
-          animation: blobFloat 12s ease-in-out infinite 2s;
-        }
-
+        .blob-1 { width: 500px; height: 250px; background: #014d22; top: 10%; left: 5%; opacity: 0.35; animation: blobFloat 8s ease-in-out infinite; }
+        .blob-2 { width: 400px; height: 200px; background: #016b2e; top: 55%; right: 5%; opacity: 0.25; animation: blobFloat 10s ease-in-out infinite reverse; }
+        .blob-3 { width: 300px; height: 150px; background: #00a73e; bottom: 15%; left: 30%; opacity: 0.12; animation: blobFloat 12s ease-in-out infinite 2s; }
         @keyframes blobFloat {
           0%, 100% { transform: translate(0, 0) scale(1); }
           33% { transform: translate(20px, -20px) scale(1.05); }
           66% { transform: translate(-15px, 10px) scale(0.97); }
         }
-
         .hero-content {
           position: relative;
           z-index: 10;
@@ -225,12 +191,10 @@ const HeroSection = () => {
           width: 100%;
           animation: fadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
         }
-
         @keyframes fadeUp {
           from { opacity: 0; transform: translateY(40px); }
           to { opacity: 1; transform: translateY(0); }
         }
-
         .hero-badge {
           display: inline-flex;
           align-items: center;
@@ -247,7 +211,6 @@ const HeroSection = () => {
           margin-bottom: 32px;
           animation: fadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
         }
-
         .badge-dot {
           width: 6px; height: 6px;
           background: #00a73e;
@@ -255,12 +218,10 @@ const HeroSection = () => {
           animation: pulse 2s ease-in-out infinite;
           flex-shrink: 0;
         }
-
         @keyframes pulse {
           0%, 100% { box-shadow: 0 0 0 0 rgba(0, 167, 62, 0.5); }
           50% { box-shadow: 0 0 0 5px rgba(0, 167, 62, 0); }
         }
-
         .hero-title {
           font-family: 'Instrument Serif', serif;
           font-weight: 400;
@@ -272,12 +233,10 @@ const HeroSection = () => {
           gap: 4px;
           animation: fadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
         }
-
         .title-line { display: block; }
         .title-line-1 { font-size: clamp(2rem, 5.5vw, 4rem); color: rgba(255,255,255,0.55); font-style: italic; }
         .title-line-2 { font-size: clamp(2.8rem, 7.5vw, 5.6rem); }
         .title-line-3 { font-size: clamp(2rem, 5.5vw, 4rem); color: rgba(255,255,255,0.55); font-style: italic; }
-
         .title-highlight {
           background: linear-gradient(135deg, #00c44a 0%, #00ff6a 50%, #00a73e 100%);
           -webkit-background-clip: text;
@@ -285,7 +244,6 @@ const HeroSection = () => {
           background-clip: text;
           position: relative;
         }
-
         .title-highlight::after {
           content: '';
           position: absolute;
@@ -295,7 +253,6 @@ const HeroSection = () => {
           background: linear-gradient(90deg, transparent, #00a73e, transparent);
           border-radius: 2px;
         }
-
         .hero-subtitle {
           font-size: clamp(1rem, 2.5vw, 1.2rem);
           color: rgba(255,255,255,0.55);
@@ -304,10 +261,8 @@ const HeroSection = () => {
           font-weight: 300;
           animation: fadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
         }
-
         .subtitle-br { display: none; }
         @media (min-width: 640px) { .subtitle-br { display: block; } }
-
         .hero-actions {
           display: flex;
           gap: 16px;
@@ -316,7 +271,6 @@ const HeroSection = () => {
           margin-bottom: 48px;
           animation: fadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
         }
-
         .btn-primary {
           position: relative;
           display: inline-flex;
@@ -346,7 +300,6 @@ const HeroSection = () => {
         }
         .btn-arrow { font-size: 1.1rem; transition: transform 0.2s; }
         .btn-primary:hover .btn-arrow { transform: translateX(4px); }
-
         .btn-secondary {
           display: inline-flex;
           align-items: center;
@@ -378,7 +331,6 @@ const HeroSection = () => {
           padding-left: 2px;
           flex-shrink: 0;
         }
-
         .hero-stats {
           display: flex;
           gap: 0;
@@ -392,7 +344,6 @@ const HeroSection = () => {
           max-width: 480px;
           margin: 0 auto;
         }
-
         .stat-item {
           flex: 1;
           padding: 20px 16px;
@@ -403,7 +354,6 @@ const HeroSection = () => {
           border-right: 1px solid rgba(255,255,255,0.08);
         }
         .stat-item:last-child { border-right: none; }
-
         .stat-value {
           font-family: 'Geist', sans-serif;
           font-weight: 600;
@@ -420,7 +370,6 @@ const HeroSection = () => {
           letter-spacing: 0.06em;
           font-weight: 500;
         }
-
         .hero-image-container {
           position: relative;
           z-index: 10;
@@ -429,7 +378,6 @@ const HeroSection = () => {
           margin-top: 56px;
           animation: fadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;
         }
-
         .image-glow {
           position: absolute;
           top: -40px;
@@ -440,7 +388,6 @@ const HeroSection = () => {
           background: radial-gradient(ellipse, rgba(0,167,62,0.3) 0%, transparent 70%);
           pointer-events: none;
         }
-
         .image-frame {
           border-radius: 24px 24px 0 0;
           overflow: hidden;
@@ -449,13 +396,7 @@ const HeroSection = () => {
           background: rgba(255,255,255,0.02);
           backdrop-filter: blur(4px);
         }
-
-        .hero-image {
-          width: 100%;
-          height: auto;
-          display: block;
-        }
-
+        .hero-image { width: 100%; height: auto; display: block; }
         @media (max-width: 640px) {
           .hero-section { padding: 70px 20px 0; }
           .hero-badge { font-size: 10px; }
@@ -465,8 +406,6 @@ const HeroSection = () => {
           .hero-actions { flex-direction: column; align-items: center; }
           .btn-primary, .btn-secondary { width: 100%; max-width: 280px; justify-content: center; }
         }
-
-        /* Video Modal */
         .video-overlay {
           position: fixed;
           inset: 0;
@@ -479,12 +418,10 @@ const HeroSection = () => {
           padding: 24px;
           animation: overlayIn 0.25s ease both;
         }
-
         @keyframes overlayIn {
           from { opacity: 0; }
           to { opacity: 1; }
         }
-
         .video-modal {
           position: relative;
           width: 100%;
@@ -496,16 +433,13 @@ const HeroSection = () => {
           box-shadow: 0 0 0 1px rgba(0,167,62,0.1), 0 40px 80px rgba(0,0,0,0.6);
           animation: modalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
         }
-
         @keyframes modalIn {
           from { opacity: 0; transform: scale(0.94) translateY(20px); }
           to { opacity: 1; transform: scale(1) translateY(0); }
         }
-
         .video-close {
           position: absolute;
-          top: 14px;
-          right: 14px;
+          top: 14px; right: 14px;
           z-index: 10;
           background: rgba(255,255,255,0.08);
           border: 1px solid rgba(255,255,255,0.12);
@@ -518,21 +452,16 @@ const HeroSection = () => {
           transition: background 0.2s, color 0.2s;
           font-family: 'Geist', sans-serif;
         }
-        .video-close:hover {
-          background: rgba(255,255,255,0.15);
-          color: #fff;
-        }
-
+        .video-close:hover { background: rgba(255,255,255,0.15); color: #fff; }
         .video-wrapper {
           position: relative;
-          padding-bottom: 56.25%; /* 16:9 */
+          padding-bottom: 56.25%;
           height: 0;
         }
         .video-wrapper iframe {
           position: absolute;
           inset: 0;
-          width: 100%;
-          height: 100%;
+          width: 100%; height: 100%;
           border: none;
           display: block;
         }

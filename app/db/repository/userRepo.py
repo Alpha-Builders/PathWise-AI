@@ -5,7 +5,7 @@ from db.schema.user import UserInCreate
 
 class UserRepository(BaseRepository): # To store user.
   def create_user(self, user_data: UserInCreate):
-    new_user = User(**user_data.model_dump(exclude_none=True)) # This ensures no None Values available.
+    new_user = User(**user_data) # This ensures no None Values available.
 
     self.session.add(instance=new_user) # this is to add user to DB
     self.session.commit() # this is to save the changes to DB 

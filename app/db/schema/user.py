@@ -39,6 +39,7 @@ class UserInLogin(BaseModel):
 # Token given to user with the output.
 class UserWithToken(BaseModel):
   token: str
+  user: UserOutput
 
 
 

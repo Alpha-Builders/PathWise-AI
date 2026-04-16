@@ -41,3 +41,9 @@ class UserService:
         token=token,
         user=UserOutput.model_validate(user)
     )
+  
+  def get_user_by_id(self, user_id: int) -> UserOutput:
+    user = self.__userRepository.get_user_by_id(user_id=user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return UserOutput.model_validate(user)
