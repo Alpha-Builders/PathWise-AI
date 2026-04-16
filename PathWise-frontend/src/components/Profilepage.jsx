@@ -5,6 +5,7 @@ import {
   Shield, LogOut, Camera, Check
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { api } from '../api/client'
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null)
@@ -23,7 +24,7 @@ const ProfilePage = () => {
   useEffect(() => {
     const token = localStorage.getItem('token')
     if (!token) return
-    fetch('/api/auth/me', {
+    fetch(api.me, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(r => r.ok ? r.json() : Promise.reject())
