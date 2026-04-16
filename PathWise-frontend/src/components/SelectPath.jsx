@@ -22,7 +22,7 @@ const SelectPath = () => {
     const token = localStorage.getItem('token');
     if (!token) return;
 
-    fetch('/auth/me', {
+    fetch('/me', {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(r => r.ok ? r.json() : Promise.reject())
