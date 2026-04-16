@@ -27,7 +27,7 @@ async def login(loginDetails: UserInLogin, db: Session = Depends(get_db)):
 
 
 
-@authRouter.post("/signup", status_code=201, response_model=UserOutput)
+@authRouter.post("/signup", status_code=201, response_model=UserWithToken)
 async def signup(signupDetails: UserInCreate, db: Session = Depends(get_db)):
     try:
         return UserService(session=db).signup(user_details=signupDetails) # This is to call the signup method of the UserService class and pass the user details provided by the client and the database session.

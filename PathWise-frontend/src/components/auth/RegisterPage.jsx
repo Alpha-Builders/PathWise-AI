@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+
+
+
 const RegisterPage = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
@@ -44,12 +49,17 @@ const RegisterPage = () => {
     try {
       console.log('Submitting registration for:', formData.email);
       
-      const res = await fetch('http://localhost:1180/api/users/register', {
+      const res = await fetch(`${BASE_URL}/auth/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          first_name: formData.firstName,
+          last_name: formData.lastName,
+          email: formData.email,
+          password: formData.password
+        })
       });
 
       console.log('Response status:', res.status);
@@ -78,7 +88,12 @@ const RegisterPage = () => {
       try {
         localStorage.setItem('firstName', formData.firstName);
         localStorage.setItem('lastName', formData.lastName);
-        localStorage.setItem('verifyEmail', formData.email);
+        if (responseData.token) {
+          localStorage.setItem('token', responseData.token);
+        } else {
+          throw new Error("No token returned from server");
+        }
+        // localStorage.setItem('verifyEmail', formData.email);
         console.log('Email stored in localStorage:', formData.email);
       } catch (storageError) {
         console.warn('LocalStorage not available:', storageError);
@@ -87,10 +102,10 @@ const RegisterPage = () => {
 
       // Add a small delay to ensure localStorage is set
       setTimeout(() => {
-        console.log('Navigating to /verify');
+        console.log('Navigating to /select-path');
         
         // Navigate with state as fallback if localStorage fails
-        navigate('/verify', { 
+        navigate('/select-path', { 
           state: { email: formData.email },
           replace: true // Use replace to prevent going back to register
         });

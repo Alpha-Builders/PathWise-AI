@@ -212,7 +212,7 @@ const HowItWorks = () => {
               <p className="cta-sub">
                 Get personalized career guidance in minutes.<br />Free to start, no credit card required.
               </p>
-              <a href="/auth" className="cta-btn">
+              <a href="/register" className="cta-btn">
                 <span>Sign Up Free</span>
                 <span className="cta-arrow">→</span>
                 <div className="cta-btn-shine" />

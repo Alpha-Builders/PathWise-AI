@@ -1,4 +1,4 @@
-from pydantic import EmailStr, BaseModel
+from pydantic import ConfigDict, EmailStr, BaseModel
 from typing import Union
 
 
@@ -17,6 +17,7 @@ class UserOutput(BaseModel):
   first_name: str
   last_name: str
   email: EmailStr
+  model_config = ConfigDict(from_attributes=True) # This is to tell Pydantic to read data from the SQLAlchemy model attributes.
 
 
 # What we expect from user when they want to update the properties of their account.

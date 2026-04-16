@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+
+
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
@@ -15,10 +19,10 @@ const LoginPage = () => {
       setError('Please fill in all fields.');
       return;
     }
-
+//'https://pathwisejwt.up.railway.app/auth/login'
     setLoading(true);
     try {
-      const res = await fetch('https://pathwisejwt.up.railway.app/auth/login', {
+      const res = await fetch(`${BASE_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
