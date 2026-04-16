@@ -26,6 +26,7 @@ def startup():
 
 origins = [
     "http://localhost:5173",
+    "https://path-wise-ai-bmq2.vercel.app"
 ]
 
 app.add_middleware(
