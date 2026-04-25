@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 
+'react-router-dom';
+import { Eye, EyeOff } from "lucide-react";
 import { api } from '../../api/client';
 
 const LoginPage = () => {
@@ -31,6 +33,7 @@ const LoginPage = () => {
         throw new Error(data.detail || data.message || 'Login failed.');
       }
 
+      console.log("Saving token:", data.token)
       localStorage.setItem('token', data.token);
       localStorage.setItem('firstName', data.user.first_name);
       localStorage.setItem('lastName', data.user.last_name);
@@ -87,7 +90,7 @@ const LoginPage = () => {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-green-400 transition-colors"
               >
-                {showPassword ? '🙈' : '👁'}
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
 

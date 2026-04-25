@@ -5,4 +5,5 @@ export const api = {
   login: `${API_BASE}/auth/login`,
   signup: `${API_BASE}/auth/signup`,
   me: `${API_BASE}/auth/me`,
+  updateUser: `${API_BASE}/auth/me`
 };

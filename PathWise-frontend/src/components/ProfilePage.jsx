@@ -47,12 +47,60 @@ const ProfilePage = () => {
     const l = u.last_name?.[0] ?? ''
     return (f + l).toUpperCase() || u.email?.[0]?.toUpperCase() || '?'
   }
+  const handleSave = async () => {
+    const token = localStorage.getItem('token')
 
-  const handleSave = () => {
-    setUser({ ...user, ...form })
+    const allowedFields = [
+      'first_name',
+      'last_name',
+      'email',
+      'phone',
+      'school',
+      'grade',
+      'major',
+      'gpa',
+      'sat',
+      'grad_year',
+      'interests',
+      'activities',
+      'path',
+    ]
+
+  const payload = Object.fromEntries(
+    Object.entries(form).filter(([key, value]) =>
+      allowedFields.includes(key) && value !== user[key]
+    )
+  )
+
+  
+    // Object.keys(payload).forEach(
+    //   key => payload[key] === undefined && delete payload[key]
+    // )
+
+    if (Object.keys(payload).length === 0) {
+      console.log('Nothing changed')
+      setEditing(false)
+      return
+    }
+
+    const res = await fetch(api.updateUser, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    })
+
+    if (!res.ok) {
+      console.error('Update failed')
+      return
+    }
+
+    const data = await res.json()
+    setUser(data)
     setEditing(false)
     setSaved(true)
-    setTimeout(() => setSaved(false), 2500)
   }
 
   const handleLogout = () => {
@@ -60,6 +108,33 @@ const ProfilePage = () => {
     setUser(null)
     navigate('/auth')
   }
+
+  useEffect(() => {
+  const token = localStorage.getItem('token')
+  console.log('Token found:', token) // Is token even there?
+  
+  if (!token) {
+    console.warn('No token — user not logged in')
+    return
+  }
+
+  fetch(api.me, {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+    .then(r => {
+      console.log('Response status:', r.status) // What is the server saying?
+      if (!r.ok) return r.json().then(err => { throw new Error(JSON.stringify(err)) })
+      return r.json()
+    })
+    .then(data => {
+      console.log('User data received:', data) // Is data coming through?
+      setUser(data)
+      setForm(data)
+    })
+    .catch(err => {
+      console.error('Fetch /me failed:', err.message) // What exactly failed?
+    })
+}, [])
 
   const unreadCount = notifications.filter(n => !n.read).length
   const pathLabel = user?.path === 'high-school' ? 'High School' : user?.path === 'college' ? 'College' : null

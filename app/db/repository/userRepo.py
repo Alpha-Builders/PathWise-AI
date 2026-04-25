@@ -27,4 +27,18 @@ class UserRepository(BaseRepository): # To store user.
     user = self.session.query(User).filter_by(id=user_id).first()
 
     return user 
+  
+  def update_user(self, user_id: int, data: dict):
+    user = self.get_user_by_id(user_id)
+
+    if not user:
+        return None
+
+    for key, value in data.items():
+        setattr(user, key, value)
+
+    self.session.commit()
+    self.session.refresh(user)
+
+    return user
 

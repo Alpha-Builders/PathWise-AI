@@ -13,13 +13,6 @@ app = FastAPI(
     version="1.0.0",
 )
 
-
-
-from fastapi import FastAPI
-  # ensure models are loaded
-
-app = FastAPI()
-
 @app.on_event("startup")
 def startup():
     Base.metadata.create_all(bind=engine)

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { School, GraduationCap, Bell, User, ArrowRight, Sparkles } from 'lucide-react'
 import { useNavigate } from 'react-router-dom';
+import { api } from '../api/client'
 
 const SelectPath = () => {
   const [selectedPath, setSelectedPath] = useState(null);
@@ -22,13 +23,12 @@ const SelectPath = () => {
     const token = localStorage.getItem('token');
     if (!token) return;
 
-    fetch('/me', {
+    fetch(api.me, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(r => r.ok ? r.json() : Promise.reject())
       .then(data => setUser(data))
       .catch(() => {
-        localStorage.removeItem('token');
         setUser(null);
       });
   }, []);

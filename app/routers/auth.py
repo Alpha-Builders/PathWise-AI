@@ -1,11 +1,13 @@
 from fastapi import APIRouter, Depends
 from util.protectRoute import get_current_user
 from core.database import get_db
-from db.schema.user import UserInCreate, UserInLogin, UserInUpdate, UserWithToken, UserOutput
+from db.schema.user import UserInCreate, UserInLogin, UserInUpdate, UserWithToken, UserOutput, PasswordChangeSchema
 from fastapi import HTTPException
 from service.userService import UserService
 from sqlalchemy.orm import Session
 import logging
+
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -51,3 +53,22 @@ def get_me(
     return service.get_user_by_id(user_id)
 
 
+@authRouter.patch("/me", response_model=UserOutput)
+def update_user(
+    payload: UserInUpdate,
+    user_id: int = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    service = UserService(session=db)
+    return service.update_user(user_id, payload)
+
+
+# Passwords shouldn't be editable easily.
+@authRouter.put("/change-password", status_code=200)
+def change_password(
+    payload: PasswordChangeSchema,
+    db: Session = Depends(get_db),
+    user_id: int = Depends(get_current_user)
+):
+    service = UserService(session=db)
+    return service.change_password(user_id, payload)
