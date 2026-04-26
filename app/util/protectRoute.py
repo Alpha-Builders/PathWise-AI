@@ -1,4 +1,4 @@
-from fastapi import Depends, Header, HTTPException, status
+from fastapi import Header, HTTPException, status
 from typing import Annotated, Union
 from core.security.authHandler import AuthHandler
 from core.database import get_db
