@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { api } from '../..//api/client';
+import { api, authFetch } from '../../api/client';
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -37,9 +37,8 @@ const RegisterPage = () => {
 
     setLoading(true);
     try {
-      const res = await fetch(api.signup, {
+      const res = await authFetch(api.signup, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           first_name: formData.firstName,
           last_name: formData.lastName,

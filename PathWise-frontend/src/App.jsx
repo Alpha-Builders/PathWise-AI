@@ -20,7 +20,7 @@ import Test from './components/Test';
 import Project from './components/Projects';
 import HighSchoolPath from './components/HighSchoolPath';
 import ProfilePage from './components/ProfilePage' 
-import ProtectedRoute from './components/ProtectedRoute';
+import {ProtectedRoute, GuestRoute} from './components/ProtectedRoute';
 
 
 
@@ -68,19 +68,13 @@ const AnimatedRoutes = () => {
         </Route>
 
         {/* Auth routes — no Navbar + Footer */}
-        <Route path="/auth" element={<AnimatedPageWrapper><LoginPage /></AnimatedPageWrapper>} />
-        <Route path="/register" element={<AnimatedPageWrapper><RegisterPage /></AnimatedPageWrapper>} />
+         
+        <Route path="/auth" element={<GuestRoute><LoginPage /></GuestRoute>} />
+        <Route path="/register" element={<GuestRoute><RegisterPage /></GuestRoute>} />
 
         {/* App routes — no Navbar + Footer */}
-        <Route path="/select-path" element={<AnimatedPageWrapper><SelectPath /></AnimatedPageWrapper>} />
-        <Route 
-          path="/profile" 
-          element={
-            <ProtectedRoute>
-              <ProfilePage />
-            </ProtectedRoute>
-          } 
-        />
+        <Route path="/select-path" element={<ProtectedRoute><SelectPath /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
         <Route path="/course-selection" element={<AnimatedPageWrapper><Courselection /></AnimatedPageWrapper>} />
         <Route path="/highschool-path" element={<AnimatedPageWrapper><HighSchoolPath /></AnimatedPageWrapper>} />
         <Route path="/career-path" element={<AnimatedPageWrapper><CareerPathPage /></AnimatedPageWrapper>} />
@@ -90,7 +84,6 @@ const AnimatedRoutes = () => {
         <Route path="/result" element={<AnimatedPageWrapper><Result /></AnimatedPageWrapper>} />
         <Route path="/test" element={<AnimatedPageWrapper><Test /></AnimatedPageWrapper>} />
         <Route path="/project-page" element={<AnimatedPageWrapper><Project /></AnimatedPageWrapper>} />
-
       </Routes>
     </AnimatePresence>
   );

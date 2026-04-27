@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 
 'react-router-dom';
 import { Eye, EyeOff } from "lucide-react";
-import { api } from '../../api/client';
+import { api, authFetch } from '../../api/client';
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -21,9 +21,8 @@ const LoginPage = () => {
 
     setLoading(true);
     try {
-      const res = await fetch(api.login, {
+      const res = await authFetch(api.login, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
 

@@ -1,41 +1,35 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { api } from '../api/client';
+import { useAuth } from './AuthContext';
 
 const Navbar = () => {
-  const [scrolled, setScrolled]       = useState(false);
-  const [menuOpen, setMenuOpen]       = useState(false);
-  const [user, setUser]               = useState(null);
-  const [loadingUser, setLoadingUser] = useState(true);
+  const [scrolled, setScrolled]     = useState(false);
+  const [menuOpen, setMenuOpen]     = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [notifOpen, setNotifOpen]     = useState(false);
-  const [notifications]               = useState([]);
+  const [notifOpen, setNotifOpen]   = useState(false);
+  const [notifications]             = useState([]);
+
+  // ── FIX 1: Pull user from global context so it's stable across all pages ──
+  const { user, loadingUser, logout } = useAuth();
 
   const profileRef = useRef(null);
   const notifRef   = useRef(null);
   const navigate   = useNavigate();
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) { setLoadingUser(false); return; }
-    fetch(api.me, { headers: { Authorization: `Bearer ${token}` } })
-      .then(r => r.ok ? r.json() : Promise.reject())
-      .then(data => setUser(data))
-      .catch(() => setUser(null))
-      .finally(() => setLoadingUser(false));
-  }, []);
-
+  // Scroll shadow
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // Lock body scroll when mobile drawer is open
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [menuOpen]);
 
+  // Close dropdowns on outside click
   useEffect(() => {
     const handler = (e) => {
       if (profileRef.current && !profileRef.current.contains(e.target)) setProfileOpen(false);
@@ -47,10 +41,11 @@ const Navbar = () => {
 
   const closeMenu = () => setMenuOpen(false);
 
+  // ── FIX 2: Logout delegates to context so user clears globally ──
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    setUser(null);
+    logout();
     setProfileOpen(false);
+    closeMenu();
     navigate('/');
   };
 
@@ -194,9 +189,7 @@ const Navbar = () => {
           </button>
         </nav>
 
-        {/* ── Mobile drawer ──
-            FIX 1: max-height bumped to 420px so logged-in items aren't clipped.
-            FIX 2: background is fully opaque #071a0f — no alpha bleed. */}
+        {/* ── Mobile drawer ── */}
         <div className={`mobile-drawer ${menuOpen ? 'drawer-open' : ''}`}>
           <ul className="drawer-links">
             {links.map(({ label, href }) => (
@@ -205,29 +198,32 @@ const Navbar = () => {
               </li>
             ))}
           </ul>
+
+          {/* ── FIX 3: Render correct mobile actions based on auth state ── */}
           <div className="drawer-actions">
-            {user ? (
-              <>
-                {/* FIX: use a proper <Link> rendered as a full-width block button */}
-                <Link
-                  to="/profile"
-                  className="drawer-ghost"
-                  onClick={closeMenu}
-                >
-                  View Profile
-                </Link>
-                <button
-                  className="drawer-launch"
-                  onClick={() => { handleLogout(); closeMenu(); }}
-                >
-                  Logout
-                </button>
-              </>
-            ) : (
-              <>
-                <Link to="/auth"     className="drawer-ghost"  onClick={closeMenu}>Sign In</Link>
-                <Link to="/register" className="drawer-launch" onClick={closeMenu}>Launch →</Link>
-              </>
+            {!loadingUser && (
+              user ? (
+                <>
+                  <Link
+                    to="/profile"
+                    className="drawer-ghost"
+                    onClick={closeMenu}
+                  >
+                    View Profile
+                  </Link>
+                  <button
+                    className="drawer-launch"
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link to="/auth"     className="drawer-ghost"  onClick={closeMenu}>Sign In</Link>
+                  <Link to="/register" className="drawer-launch" onClick={closeMenu}>Launch →</Link>
+                </>
+              )
             )}
           </div>
         </div>
@@ -242,7 +238,6 @@ const Navbar = () => {
           top: 0; left: 0; right: 0;
           z-index: 1000;
           font-family: 'Geist', sans-serif;
-          /* FIX: fully opaque — no rgba alpha */
           background: #071a0f;
           border-bottom: 1px solid rgba(0,167,62,0.18);
           transition: box-shadow 0.3s, border-color 0.3s;
@@ -321,11 +316,13 @@ const Navbar = () => {
         .icon-btn {
           position:relative; display:flex; align-items:center; justify-content:center;
           width:36px; height:36px;
-          /* FIX: opaque background */
           background:#0d2118;
           border:1px solid rgba(255,255,255,0.08);
           border-radius:9px; color:rgba(255,255,255,0.55);
           cursor:pointer; transition:color 0.2s, background 0.2s, border-color 0.2s;
+          /* FIX: fast touch response */
+          touch-action: manipulation;
+          -webkit-tap-highlight-color: transparent;
         }
         .icon-btn:hover { color:#fff; background:#0d2e17; border-color:rgba(74,222,128,0.2); }
         .badge {
@@ -337,7 +334,12 @@ const Navbar = () => {
         }
 
         /* ── Avatar ── */
-        .avatar-btn { background:none; border:none; cursor:pointer; padding:0; line-height:0; }
+        .avatar-btn {
+          background:none; border:none; cursor:pointer; padding:0; line-height:0;
+          /* FIX: fast touch response */
+          touch-action: manipulation;
+          -webkit-tap-highlight-color: transparent;
+        }
         .avatar {
           display:flex; align-items:center; justify-content:center;
           width:34px; height:34px; border-radius:50%;
@@ -353,7 +355,6 @@ const Navbar = () => {
         .dropdown {
           position:absolute; top:calc(100% + 10px); right:0;
           min-width:210px;
-          /* FIX: fully opaque solid background */
           background: #0a1f12;
           border:1px solid rgba(74,222,128,0.22);
           border-radius:14px;
@@ -370,7 +371,6 @@ const Navbar = () => {
         .dropdown-header {
           padding:13px 16px 11px;
           border-bottom:1px solid rgba(255,255,255,0.07);
-          /* FIX: opaque header background */
           background:#0e2918;
         }
         .dropdown-header-title { font-size:0.88rem; font-weight:500; color:#fff; }
@@ -394,6 +394,9 @@ const Navbar = () => {
           box-sizing:border-box;
           transition:background 0.15s, color 0.15s;
           line-height:1.4;
+          /* FIX: fast touch response on dropdown items */
+          touch-action: manipulation;
+          -webkit-tap-highlight-color: transparent;
         }
         .dropdown-item:hover { background:#0d2e17; color:#fff; }
         .dropdown-item svg { flex-shrink:0; opacity:0.7; }
@@ -414,7 +417,6 @@ const Navbar = () => {
           border-bottom:1px solid rgba(255,255,255,0.05);
         }
         .notif-item:last-child { border-bottom:none; }
-        /* FIX: opaque unread highlight */
         .notif-unread { color:#fff; background:#0d2e17; }
 
         /* ── Hamburger ── */
@@ -422,6 +424,12 @@ const Navbar = () => {
           display:none; flex-direction:column; gap:5px;
           background:none; border:none; cursor:pointer; padding:6px;
           border-radius:8px; z-index:10; transition:background 0.2s;
+          /* FIX: instant touch, no 300ms delay */
+          touch-action: manipulation;
+          -webkit-tap-highlight-color: transparent;
+          /* FIX: minimum 44px touch target for mobile */
+          min-width:44px; min-height:44px;
+          align-items:center; justify-content:center;
         }
         .hamburger:hover { background:#0d2e17; }
         .hamburger span {
@@ -434,22 +442,23 @@ const Navbar = () => {
         .hamburger-open span:nth-child(2) { opacity:0; width:0; }
         .hamburger-open span:nth-child(3) { transform:translateY(-6.5px) rotate(-45deg); }
 
-        /* ── Mobile drawer ──
-           FIX 1: background fully opaque
-           FIX 2: max-height increased to 420px so logged-in rows aren't clipped */
+        /* ── Mobile drawer ── */
         .mobile-drawer {
-          /* FIX: solid opaque background — matches navbar exactly */
           background: #071a0f;
           border-top:1px solid rgba(74,222,128,0.1);
-          overflow:hidden;
-          max-height:0;
-          transition:max-height 0.4s cubic-bezier(0.16,1,0.3,1), opacity 0.3s;
-          opacity:0;
+          /* FIX: use visibility + max-height combo to avoid clipping touch targets */
+          overflow: hidden;
+          max-height: 0;
+          transition: max-height 0.4s cubic-bezier(0.16,1,0.3,1), opacity 0.3s;
+          opacity: 0;
+          /* FIX: ensure drawer sits above page content */
+          position: relative;
+          z-index: 999;
         }
         .drawer-open {
-          /* FIX: tall enough to show all items without clipping */
-          max-height:420px;
-          opacity:1;
+          /* FIX: tall enough to show all auth states without clipping */
+          max-height: 480px;
+          opacity: 1;
         }
         .drawer-links { list-style:none; margin:0; padding:8px 20px 0; display:flex; flex-direction:column; }
         .drawer-link {
@@ -457,37 +466,69 @@ const Navbar = () => {
           color:rgba(255,255,255,0.6); text-decoration:none;
           border-bottom:1px solid rgba(255,255,255,0.06);
           transition:color 0.2s;
+          /* FIX: fast touch, no delay */
+          touch-action: manipulation;
+          -webkit-tap-highlight-color: transparent;
         }
         .drawer-link:hover { color:#fff; }
         .drawer-actions {
           display:flex; gap:10px; padding:16px 20px 24px;
         }
 
-        /* FIX: drawer-ghost works as both <Link> and <button> */
+        /* ── FIX: drawer buttons — 48px min touch target, instant response ── */
         .drawer-ghost {
-          flex:1; text-align:center; padding:12px; font-size:0.9rem;
-          color:rgba(255,255,255,0.6); text-decoration:none;
-          border:1px solid rgba(255,255,255,0.12); border-radius:10px;
-          transition:color 0.2s, background 0.2s, border-color 0.2s;
-          /* FIX: fully opaque, no alpha conflict */
+          flex: 1;
+          text-align: center;
+          /* FIX: 48px min height — Apple/Google touch target guideline */
+          min-height: 48px;
+          padding: 12px;
+          font-size: 0.9rem;
+          color: rgba(255,255,255,0.6);
+          text-decoration: none;
+          border: 1px solid rgba(255,255,255,0.12);
+          border-radius: 10px;
+          transition: color 0.2s, background 0.2s, border-color 0.2s;
           background: #071a0f;
-          cursor:pointer;
-          font-family:'Geist', sans-serif;
-          /* Ensure <Link> renders as a proper block */
-          display:flex; align-items:center; justify-content:center;
-          box-sizing:border-box;
+          cursor: pointer;
+          font-family: 'Geist', sans-serif;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-sizing: border-box;
+          /* FIX: critical — eliminates 300ms iOS tap delay */
+          touch-action: manipulation;
+          -webkit-tap-highlight-color: transparent;
+          /* FIX: ensure the element itself is tappable, not just its text */
+          -webkit-user-select: none;
+          user-select: none;
         }
         .drawer-ghost:hover { color:#fff; background:#0d2e17; border-color:rgba(74,222,128,0.25); }
 
         .drawer-launch {
-          flex:1; text-align:center; padding:12px; font-size:0.9rem; font-weight:500;
-          color:#fff; text-decoration:none;
-          background:linear-gradient(135deg,#00a73e,#00c44a);
-          border-radius:10px; border:none; cursor:pointer;
-          font-family:'Geist', sans-serif;
-          display:flex; align-items:center; justify-content:center;
-          box-sizing:border-box;
-          transition:opacity 0.2s, transform 0.2s;
+          flex: 1;
+          text-align: center;
+          /* FIX: 48px min height */
+          min-height: 48px;
+          padding: 12px;
+          font-size: 0.9rem;
+          font-weight: 500;
+          color: #fff;
+          text-decoration: none;
+          background: linear-gradient(135deg,#00a73e,#00c44a);
+          border-radius: 10px;
+          border: none;
+          cursor: pointer;
+          font-family: 'Geist', sans-serif;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-sizing: border-box;
+          transition: opacity 0.2s, transform 0.2s;
+          /* FIX: critical — eliminates 300ms iOS tap delay */
+          touch-action: manipulation;
+          -webkit-tap-highlight-color: transparent;
+          -webkit-user-select: none;
+          user-select: none;
         }
         .drawer-launch:hover { opacity:0.9; transform:translateY(-1px); }
 

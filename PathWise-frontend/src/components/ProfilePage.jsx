@@ -2,105 +2,200 @@ import React, { useState, useEffect, useRef } from 'react'
 import {
   Sparkles, Bell, User, ArrowLeft, Mail, Calendar,
   BookOpen, Edit3, Save, X, GraduationCap, School,
-  Shield, LogOut, Camera, Check
+  Shield, LogOut, Camera, Check, Eye, EyeOff, Loader2
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { api } from '../api/client'
+import { api, authFetch } from '../api/client'
 
 const ProfilePage = () => {
-  const [user, setUser] = useState(null)
-  const [editing, setEditing] = useState(false)
-  const [saved, setSaved] = useState(false)
-  const [form, setForm] = useState({})
+  const [user, setUser]               = useState(null)
+  const [editing, setEditing]         = useState(false)
+  const [saved, setSaved]             = useState(false)
+  const [form, setForm]               = useState({})
   const [openProfile, setOpenProfile] = useState(false)
-  const [openNotif, setOpenNotif] = useState(false)
-  const [notifications] = useState([])
-  const [activeTab, setActiveTab] = useState('overview')
+  const [openNotif, setOpenNotif]     = useState(false)
+  const [notifications]               = useState([])
+  const [activeTab, setActiveTab]     = useState('overview')
+
+  // ── Avatar upload state ──
+  const [avatarUploading, setAvatarUploading] = useState(false)
+  const fileInputRef = useRef(null)
+
+  // ── Password change state ──
+  const [pwForm, setPwForm]         = useState({ old_password: '', new_password: '', confirm: '' })
+  const [pwError, setPwError]       = useState('')
+  const [pwSuccess, setPwSuccess]   = useState('')
+  const [pwLoading, setPwLoading]   = useState(false)
+  const [showOld, setShowOld]       = useState(false)
+  const [showNew, setShowNew]       = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
+
+  // ── Email change state ──
+  const [emailForm, setEmailForm]   = useState({ email: '', password: '' })
+  const [emailError, setEmailError] = useState('')
+  const [emailSuccess, setEmailSuccess] = useState('')
+  const [emailLoading, setEmailLoading] = useState(false)
+  const [showEmailForm, setShowEmailForm] = useState(false)
 
   const profileRef = useRef(null)
-  const notifRef = useRef(null)
-  const navigate = useNavigate()
+  const notifRef   = useRef(null)
+  const navigate   = useNavigate()
 
   useEffect(() => {
     const token = localStorage.getItem('token')
     if (!token) return
-    fetch(api.me, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then(r => r.ok ? r.json() : Promise.reject())
-      .then(data => { setUser(data); setForm(data) })
+    authFetch(api.me)
+      .then(r => { if (!r || !r.ok) throw new Error(); return r.json() })
+      .then(data => { if (data) { setUser(data); setForm(data) } })
       .catch(() => { localStorage.removeItem('token'); setUser(null) })
   }, [])
 
   useEffect(() => {
     const handler = (e) => {
       if (profileRef.current && !profileRef.current.contains(e.target)) setOpenProfile(false)
-      if (notifRef.current && !notifRef.current.contains(e.target)) setOpenNotif(false)
+      if (notifRef.current   && !notifRef.current.contains(e.target))   setOpenNotif(false)
     }
     document.addEventListener('mousedown', handler)
     return () => document.removeEventListener('mousedown', handler)
   }, [])
 
+  // ── Helpers ──
   const getInitials = (u) => {
     if (!u) return '?'
     const f = u.first_name?.[0] ?? ''
-    const l = u.last_name?.[0] ?? ''
+    const l = u.last_name?.[0]  ?? ''
     return (f + l).toUpperCase() || u.email?.[0]?.toUpperCase() || '?'
   }
+
+  // ── Save profile fields ──
   const handleSave = async () => {
-    const token = localStorage.getItem('token')
-
     const allowedFields = [
-      'first_name',
-      'last_name',
-      'email',
-      'phone',
-      'school',
-      'grade',
-      'major',
-      'gpa',
-      'sat',
-      'grad_year',
-      'interests',
-      'activities',
-      'path',
+      'first_name','last_name','email','phone','school','grade',
+      'major','gpa','sat','grad_year','interests','activities','path',
     ]
-
-  const payload = Object.fromEntries(
-    Object.entries(form).filter(([key, value]) =>
-      allowedFields.includes(key) && value !== user[key]
+    const payload = Object.fromEntries(
+      Object.entries(form).filter(([key, value]) =>
+        allowedFields.includes(key) && value !== user[key]
+      )
     )
-  )
-
-  
-    // Object.keys(payload).forEach(
-    //   key => payload[key] === undefined && delete payload[key]
-    // )
-
-    if (Object.keys(payload).length === 0) {
-      console.log('Nothing changed')
-      setEditing(false)
-      return
-    }
-
-    const res = await fetch(api.updateUser, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(payload),
-    })
-
-    if (!res.ok) {
-      console.error('Update failed')
-      return
-    }
-
+    if (Object.keys(payload).length === 0) { setEditing(false); return }
+    const res = await authFetch(api.updateUser, { method: 'PATCH', body: JSON.stringify(payload) })
+    if (!res.ok) { console.error('Update failed'); return }
     const data = await res.json()
     setUser(data)
     setEditing(false)
     setSaved(true)
+    setTimeout(() => setSaved(false), 3000)
+  }
+
+  // ── Avatar upload ──
+  const handleAvatarClick = () => {
+    // Programmatically open the hidden file picker
+    fileInputRef.current?.click()
+  }
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Reset so selecting the same file again re-triggers onChange
+    e.target.value = ''
+
+    setAvatarUploading(true)
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+
+      const token = localStorage.getItem('token')
+      const res = await fetch(api.uploadAvatar, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        // Do NOT set Content-Type — browser sets it with the correct boundary for multipart
+        body: formData,
+      })
+      if (!res.ok) throw new Error('Upload failed')
+      const data = await res.json()
+      setUser(data)
+      setForm(data)
+    } catch (err) {
+      console.error('Avatar upload error:', err)
+    } finally {
+      setAvatarUploading(false)
+    }
+  }
+
+  // ── Password change ──
+  const handlePasswordChange = async () => {
+    setPwError('')
+    setPwSuccess('')
+
+    if (!pwForm.old_password || !pwForm.new_password) {
+      setPwError('Please fill in all fields.')
+      return
+    }
+    if (pwForm.new_password.length < 6) {
+      setPwError('New password must be at least 6 characters.')
+      return
+    }
+    if (pwForm.new_password !== pwForm.confirm) {
+      setPwError('New passwords do not match.')
+      return
+    }
+
+    setPwLoading(true)
+    try {
+      const res = await authFetch(api.changePassword, {
+        method: 'PUT',
+        body: JSON.stringify({ old_password: pwForm.old_password, new_password: pwForm.new_password }),
+      })
+      if (res.status === 400) {
+        const err = await res.json()
+        setPwError(err.detail || 'Current password is incorrect.')
+        return
+      }
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        throw new Error(err.detail || 'Request failed')
+      }
+      setPwSuccess('Password updated successfully.')
+      setPwForm({ old_password: '', new_password: '', confirm: '' })
+    } catch (err) {
+      setPwError(err.message)
+    } finally {
+      setPwLoading(false)
+    }
+  }
+
+  // ── Email change ──
+  const handleEmailChange = async () => {
+    setEmailError('')
+    setEmailSuccess('')
+    if (!emailForm.email || !emailForm.password) {
+      setEmailError('Please fill in both fields.')
+      return
+    }
+    setEmailLoading(true)
+    try {
+      const res = await authFetch(api.updateUser, {
+        method: 'PATCH',
+        body: JSON.stringify({ email: emailForm.email }),
+      })
+      if (res.status === 400) {
+        const err = await res.json()
+        setEmailError(err.detail || 'Could not update email.')
+        return
+      }
+      if (!res.ok) throw new Error()
+      const data = await res.json()
+      setUser(data)
+      setEmailSuccess('Email updated successfully.')
+      setEmailForm({ email: '', password: '' })
+      setShowEmailForm(false)
+    } catch {
+      setEmailError('Something went wrong. Please try again.')
+    } finally {
+      setEmailLoading(false)
+    }
   }
 
   const handleLogout = () => {
@@ -109,36 +204,9 @@ const ProfilePage = () => {
     navigate('/auth')
   }
 
-  useEffect(() => {
-  const token = localStorage.getItem('token')
-  console.log('Token found:', token) // Is token even there?
-  
-  if (!token) {
-    console.warn('No token — user not logged in')
-    return
-  }
-
-  fetch(api.me, {
-    headers: { Authorization: `Bearer ${token}` },
-  })
-    .then(r => {
-      console.log('Response status:', r.status) // What is the server saying?
-      if (!r.ok) return r.json().then(err => { throw new Error(JSON.stringify(err)) })
-      return r.json()
-    })
-    .then(data => {
-      console.log('User data received:', data) // Is data coming through?
-      setUser(data)
-      setForm(data)
-    })
-    .catch(err => {
-      console.error('Fetch /me failed:', err.message) // What exactly failed?
-    })
-}, [])
-
-  const unreadCount = notifications.filter(n => !n.read).length
-  const pathLabel = user?.path === 'high-school' ? 'High School' : user?.path === 'college' ? 'College' : null
-  const PathIcon = user?.path === 'high-school' ? School : GraduationCap
+  const unreadCount  = notifications.filter(n => !n.read).length
+  const pathLabel    = user?.path === 'high-school' ? 'High School' : user?.path === 'college' ? 'College' : null
+  const PathIcon     = user?.path === 'high-school' ? School : GraduationCap
 
   return (
     <>
@@ -148,18 +216,18 @@ const ProfilePage = () => {
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
-          --green-core: #22c55e;
+          --green-core:   #22c55e;
           --green-bright: #4ade80;
-          --green-deep: #15803d;
-          --green-glow: rgba(34,197,94,0.15);
-          --green-muted: rgba(34,197,94,0.08);
-          --surface: rgba(255,255,255,0.03);
-          --surface-hover: rgba(255,255,255,0.06);
-          --border: rgba(255,255,255,0.08);
+          --green-deep:   #15803d;
+          --green-glow:   rgba(34,197,94,0.15);
+          --green-muted:  rgba(34,197,94,0.08);
+          --surface:      rgba(255,255,255,0.03);
+          --surface-hover:rgba(255,255,255,0.06);
+          --border:       rgba(255,255,255,0.08);
           --border-green: rgba(34,197,94,0.4);
           --text-primary: #f0fdf4;
-          --text-secondary: #86efac;
-          --text-muted: #6b7280;
+          --text-secondary:#86efac;
+          --text-muted:   #6b7280;
         }
 
         .pp-root {
@@ -179,21 +247,21 @@ const ProfilePage = () => {
           background-size: 60px 60px;
           pointer-events: none; z-index: 0;
         }
-        .orb { position: fixed; border-radius: 50%; pointer-events: none; filter: blur(120px); z-index: 0; }
+        .orb { position:fixed;border-radius:50%;pointer-events:none;filter:blur(120px);z-index:0; }
         .orb-1 { width:600px;height:600px;background:radial-gradient(circle,rgba(34,197,94,0.12) 0%,transparent 70%);top:-200px;left:-100px;animation:orb-drift 8s ease-in-out infinite alternate; }
         .orb-2 { width:500px;height:500px;background:radial-gradient(circle,rgba(21,128,61,0.1) 0%,transparent 70%);bottom:-150px;right:-100px;animation:orb-drift 10s ease-in-out infinite alternate-reverse; }
         @keyframes orb-drift {
-          from { transform: translate(0,0) scale(1); }
-          to   { transform: translate(40px,30px) scale(1.05); }
+          from { transform:translate(0,0) scale(1); }
+          to   { transform:translate(40px,30px) scale(1.05); }
         }
 
         /* ── Header ── */
         .pp-header {
-          position: relative; z-index: 10;
-          display: flex; justify-content: space-between; align-items: center;
-          padding: 20px 40px;
-          border-bottom: 1px solid var(--border);
-          backdrop-filter: blur(12px);
+          position:relative;z-index:10;
+          display:flex;justify-content:space-between;align-items:center;
+          padding:20px 40px;
+          border-bottom:1px solid var(--border);
+          backdrop-filter:blur(12px);
         }
         .pp-logo { display:flex;align-items:center;gap:10px;text-decoration:none;cursor:pointer; }
         .pp-logo-mark {
@@ -212,7 +280,7 @@ const ProfilePage = () => {
           position:relative;width:40px;height:40px;
           background:var(--surface);border:1px solid var(--border);border-radius:12px;
           display:flex;align-items:center;justify-content:center;
-          cursor:pointer;transition:all 0.2s ease;color:var(--text-muted);
+          cursor:pointer;transition:all 0.2s;color:var(--text-muted);
         }
         .pp-icon-btn:hover { background:var(--surface-hover);border-color:var(--border-green);color:var(--green-bright); }
         .pp-notif-dot {
@@ -230,7 +298,9 @@ const ProfilePage = () => {
           display:flex;align-items:center;justify-content:center;
           font-size:0.72rem;font-weight:600;color:#fff;letter-spacing:0.05em;
           border:2px solid rgba(74,222,128,0.35);
+          overflow:hidden;
         }
+        .pp-avatar-sm img { width:100%;height:100%;object-fit:cover;border-radius:50%; }
         .pp-badge-count {
           position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;padding:0 4px;
           background:#ef4444;border:1.5px solid #080d0a;
@@ -274,24 +344,19 @@ const ProfilePage = () => {
           padding:48px 40px 80px;
           animation:fade-up 0.5s 0.05s ease both;
         }
-
-        /* Back link */
         .pp-back {
           display:inline-flex;align-items:center;gap:7px;
           font-size:13px;color:var(--text-muted);
           background:none;border:none;cursor:pointer;
           font-family:'DM Sans',sans-serif;letter-spacing:0.2px;
-          margin-bottom:40px;padding:0;
-          transition:color 0.2s;
+          margin-bottom:40px;padding:0;transition:color 0.2s;
         }
         .pp-back:hover{color:var(--green-bright);}
 
-        /* ── Hero card ── */
+        /* ── Hero ── */
         .pp-hero {
-          background:var(--surface);
-          border:1px solid var(--border);border-radius:28px;
-          padding:40px 40px 36px;
-          margin-bottom:24px;
+          background:var(--surface);border:1px solid var(--border);border-radius:28px;
+          padding:40px 40px 36px;margin-bottom:24px;
           position:relative;overflow:hidden;
         }
         .pp-hero::before {
@@ -310,7 +375,7 @@ const ProfilePage = () => {
         }
         .pp-hero-left { display:flex;align-items:center;gap:24px; }
 
-        /* Big avatar */
+        /* Avatar */
         .pp-avatar-lg {
           position:relative;flex-shrink:0;
           width:88px;height:88px;border-radius:50%;
@@ -319,15 +384,34 @@ const ProfilePage = () => {
           font-size:2rem;font-weight:600;color:#fff;letter-spacing:0.05em;
           border:3px solid rgba(74,222,128,0.3);
           box-shadow:0 0 40px rgba(34,197,94,0.25);
+          overflow:hidden;
         }
+        .pp-avatar-lg img { width:100%;height:100%;object-fit:cover;border-radius:50%; }
+        .pp-avatar-overlay {
+          /* Shown on hover so user knows it's clickable */
+          position:absolute;inset:0;border-radius:50%;
+          background:rgba(0,0,0,0.5);
+          display:flex;align-items:center;justify-content:center;
+          opacity:0;transition:opacity 0.2s;cursor:pointer;
+        }
+        .pp-avatar-lg:hover .pp-avatar-overlay { opacity:1; }
         .pp-avatar-camera {
           position:absolute;bottom:-2px;right:-2px;
-          width:26px;height:26px;border-radius:50%;
+          width:28px;height:28px;border-radius:50%;
           background:var(--green-core);border:2px solid #080d0a;
           display:flex;align-items:center;justify-content:center;
-          cursor:pointer;transition:transform 0.2s;
+          cursor:pointer;transition:transform 0.2s,background 0.2s;
+          z-index:2;
         }
-        .pp-avatar-camera:hover{transform:scale(1.1);}
+        .pp-avatar-camera:hover{transform:scale(1.1);background:var(--green-bright);}
+        .pp-avatar-spinner {
+          position:absolute;inset:0;border-radius:50%;
+          background:rgba(0,0,0,0.65);
+          display:flex;align-items:center;justify-content:center;
+          z-index:3;
+        }
+        @keyframes spin { to { transform:rotate(360deg); } }
+        .pp-spin { animation:spin 0.8s linear infinite; }
 
         .pp-hero-name {
           font-family:'Instrument Serif',serif;
@@ -346,7 +430,7 @@ const ProfilePage = () => {
           font-size:11px;font-weight:500;color:var(--green-bright);letter-spacing:0.4px;
         }
 
-        /* Edit / save buttons */
+        /* Buttons */
         .pp-edit-btn {
           display:inline-flex;align-items:center;gap:8px;
           padding:10px 20px;border-radius:12px;font-size:13px;font-weight:500;
@@ -373,7 +457,6 @@ const ProfilePage = () => {
         .pp-edit-btn-cancel:hover{background:rgba(239,68,68,0.12);color:#ef4444;}
         .pp-btn-row{display:flex;gap:8px;align-items:center;flex-shrink:0;}
 
-        /* Saved toast */
         .pp-saved {
           display:inline-flex;align-items:center;gap:6px;
           background:rgba(34,197,94,0.12);border:1px solid var(--border-green);
@@ -382,11 +465,10 @@ const ProfilePage = () => {
           animation:fade-up 0.3s ease both;flex-shrink:0;
         }
 
-        /* ── Stats strip ── */
+        /* Stats */
         .pp-stats {
           display:grid;grid-template-columns:repeat(3,1fr);gap:16px;
-          margin-top:32px;padding-top:32px;
-          border-top:1px solid var(--border);
+          margin-top:32px;padding-top:32px;border-top:1px solid var(--border);
         }
         .pp-stat { text-align:center; }
         .pp-stat-val {
@@ -395,23 +477,22 @@ const ProfilePage = () => {
         }
         .pp-stat-label{font-size:11px;color:var(--text-muted);letter-spacing:0.5px;text-transform:uppercase;}
 
-        /* ── Tabs ── */
+        /* Tabs */
         .pp-tabs {
           display:flex;gap:4px;
           background:var(--surface);border:1px solid var(--border);
-          border-radius:16px;padding:6px;
-          margin-bottom:24px;
+          border-radius:16px;padding:6px;margin-bottom:24px;
         }
         .pp-tab {
           flex:1;padding:10px 16px;border-radius:12px;border:none;
           font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;
-          cursor:pointer;transition:all 0.2s ease;color:var(--text-muted);
+          cursor:pointer;transition:all 0.2s;color:var(--text-muted);
           background:none;letter-spacing:0.2px;
         }
         .pp-tab:hover{color:var(--text-primary);}
         .pp-tab.active{background:rgba(34,197,94,0.12);color:var(--green-bright);border:1px solid rgba(34,197,94,0.25);}
 
-        /* ── Detail card ── */
+        /* Cards */
         .pp-card {
           background:var(--surface);border:1px solid var(--border);
           border-radius:24px;padding:32px;margin-bottom:20px;
@@ -426,15 +507,6 @@ const ProfilePage = () => {
 
         /* Fields */
         .pp-fields { display:grid;grid-template-columns:1fr 1fr;gap:20px; }
-        @media(max-width:600px){
-          .pp-fields{grid-template-columns:1fr;}
-          .pp-page{padding:32px 20px 60px;}
-          .pp-header{padding:16px 20px;}
-          .pp-hero{padding:28px 24px;}
-          .pp-stats{grid-template-columns:repeat(3,1fr);}
-          .pp-hero-top{flex-direction:column;}
-        }
-
         .pp-field { display:flex;flex-direction:column;gap:6px; }
         .pp-field-label{font-size:11px;font-weight:500;letter-spacing:0.5px;text-transform:uppercase;color:var(--text-muted);}
         .pp-field-val {
@@ -449,21 +521,34 @@ const ProfilePage = () => {
           border-radius:12px;line-height:1.4;
           font-family:'DM Sans',sans-serif;outline:none;
           transition:border-color 0.2s,box-shadow 0.2s;
-          box-shadow:0 0 0 0 rgba(34,197,94,0);
         }
         .pp-field-input:focus{border-color:var(--green-core);box-shadow:0 0 0 3px rgba(34,197,94,0.1);}
         .pp-field-input::placeholder{color:var(--text-muted);}
 
-        /* Account security card */
+        /* Password input wrapper */
+        .pp-pw-wrap {
+          position:relative;display:flex;align-items:center;
+        }
+        .pp-pw-wrap .pp-field-input { width:100%;padding-right:44px; }
+        .pp-pw-eye {
+          position:absolute;right:12px;
+          background:none;border:none;cursor:pointer;
+          color:var(--text-muted);padding:4px;
+          display:flex;align-items:center;
+          transition:color 0.15s;
+        }
+        .pp-pw-eye:hover { color:var(--green-bright); }
+
+        /* Security rows */
         .pp-security-row {
-          display:flex;align-items:center;justify-content:space-between;
-          padding:16px 0;border-bottom:1px solid var(--border);
+          display:flex;align-items:flex-start;justify-content:space-between;
+          padding:18px 0;border-bottom:1px solid var(--border);gap:16px;
         }
         .pp-security-row:last-child{border-bottom:none;padding-bottom:0;}
         .pp-security-row:first-child{padding-top:0;}
-        .pp-sec-left{display:flex;align-items:center;gap:12px;}
+        .pp-sec-left{display:flex;align-items:flex-start;gap:12px;flex:1;}
         .pp-sec-icon {
-          width:36px;height:36px;border-radius:10px;
+          width:36px;height:36px;border-radius:10px;flex-shrink:0;
           background:var(--surface-hover);border:1px solid var(--border);
           display:flex;align-items:center;justify-content:center;color:var(--text-muted);
         }
@@ -474,12 +559,51 @@ const ProfilePage = () => {
           background:none;border:none;cursor:pointer;
           font-family:'DM Sans',sans-serif;padding:0;
           letter-spacing:0.3px;transition:opacity 0.2s;
+          white-space:nowrap;flex-shrink:0;margin-top:2px;
         }
         .pp-sec-action:hover{opacity:0.7;}
+        .pp-sec-action-danger { color:rgba(239,68,68,0.75); }
+        .pp-sec-action-danger:hover { opacity:1;color:#ef4444; }
         .pp-status-dot{
           display:inline-block;width:7px;height:7px;border-radius:50%;
           background:var(--green-core);margin-right:6px;
           box-shadow:0 0 6px rgba(34,197,94,0.6);
+        }
+
+        /* Inline security forms */
+        .pp-sec-form {
+          margin-top:14px;padding:16px;
+          background:rgba(34,197,94,0.03);
+          border:1px solid rgba(34,197,94,0.15);
+          border-radius:14px;display:flex;flex-direction:column;gap:10px;
+        }
+        .pp-sec-form-row { display:flex;gap:10px;flex-wrap:wrap; }
+        .pp-sec-form-row .pp-pw-wrap,
+        .pp-sec-form-row .pp-field-input { flex:1;min-width:160px; }
+        .pp-sec-msg {
+          font-size:12px;padding:8px 12px;border-radius:8px;
+        }
+        .pp-sec-msg-error { background:rgba(239,68,68,0.08);color:#f87171;border:1px solid rgba(239,68,68,0.2); }
+        .pp-sec-msg-success { background:rgba(34,197,94,0.08);color:var(--green-bright);border:1px solid rgba(34,197,94,0.2); }
+        .pp-sec-submit {
+          align-self:flex-start;display:inline-flex;align-items:center;gap:7px;
+          padding:9px 18px;border-radius:10px;font-size:13px;font-weight:500;
+          font-family:'DM Sans',sans-serif;cursor:pointer;
+          background:linear-gradient(135deg,var(--green-core),var(--green-deep));
+          border:none;color:#fff;
+          transition:opacity 0.2s,transform 0.2s;
+        }
+        .pp-sec-submit:hover{opacity:0.9;transform:translateY(-1px);}
+        .pp-sec-submit:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+
+        @media(max-width:600px){
+          .pp-fields{grid-template-columns:1fr;}
+          .pp-page{padding:32px 20px 60px;}
+          .pp-header{padding:16px 20px;}
+          .pp-hero{padding:28px 24px;}
+          .pp-stats{grid-template-columns:repeat(3,1fr);}
+          .pp-hero-top{flex-direction:column;}
+          .pp-sec-form-row{flex-direction:column;}
         }
 
         @keyframes fade-up {
@@ -487,6 +611,15 @@ const ProfilePage = () => {
           to{opacity:1;transform:translateY(0);}
         }
       `}</style>
+
+      {/* Hidden file input — lives outside the avatar so nothing clips it */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp,image/gif"
+        style={{ display: 'none' }}
+        onChange={handleFileChange}
+      />
 
       <div className="pp-root">
         <div className="orb orb-1" />
@@ -500,7 +633,6 @@ const ProfilePage = () => {
           </div>
           <div className="pp-header-actions">
 
-            {/* Notification */}
             <div className="pp-dropdown-wrap" ref={notifRef}>
               <button className="pp-icon-btn" onClick={() => { setOpenNotif(v => !v); setOpenProfile(false) }}>
                 <Bell size={16} />
@@ -516,16 +648,18 @@ const ProfilePage = () => {
                   {notifications.length === 0
                     ? <div className="pp-notif-empty">You're all caught up 🎉</div>
                     : notifications.map((n, i) => (
-                      <div key={i} className={`pp-notif-item ${!n.read ? 'pp-notif-unread' : ''}`}>{n.message}</div>
+                      <div key={i} className="pp-dropdown-item">{n.message}</div>
                     ))}
                 </div>
               )}
             </div>
 
-            {/* Profile dropdown */}
             <div className="pp-dropdown-wrap" ref={profileRef}>
               <button className="pp-icon-btn" onClick={() => { setOpenProfile(v => !v); setOpenNotif(false) }}>
-                {user ? <span className="pp-avatar-sm">{getInitials(user)}</span> : <User size={16} />}
+                {user?.profile_image
+                  ? <span className="pp-avatar-sm"><img src={user.profile_image} alt="avatar" /></span>
+                  : user ? <span className="pp-avatar-sm">{getInitials(user)}</span>
+                  : <User size={16} />}
               </button>
               {openProfile && (
                 <div className="pp-dropdown">
@@ -548,24 +682,44 @@ const ProfilePage = () => {
           </div>
         </header>
 
-        {/* Page content */}
         <div className="pp-page">
-
           <button className="pp-back" onClick={() => navigate(-1)}>
-            <ArrowLeft size={14} />
-            Back
+            <ArrowLeft size={14} /> Back
           </button>
 
           {/* ── Hero card ── */}
           <div className="pp-hero">
             <div className="pp-hero-top">
               <div className="pp-hero-left">
-                <div className="pp-avatar-lg">
-                  {getInitials(user)}
-                  <div className="pp-avatar-camera">
+
+                {/* Avatar — click anywhere on it OR the camera badge to pick a file */}
+                <div className="pp-avatar-lg" onClick={handleAvatarClick} style={{ cursor: 'pointer' }}>
+                  {user?.profile_image
+                    ? <img src={user.profile_image} alt="Profile" />
+                    : getInitials(user)
+                  }
+
+                  {/* Hover overlay hint */}
+                  <div className="pp-avatar-overlay">
+                    <Camera size={20} color="#fff" />
+                  </div>
+
+                  {/* Upload spinner */}
+                  {avatarUploading && (
+                    <div className="pp-avatar-spinner">
+                      <Loader2 size={22} color="#22c55e" className="pp-spin" />
+                    </div>
+                  )}
+
+                  {/* Camera badge */}
+                  <div
+                    className="pp-avatar-camera"
+                    onClick={(e) => { e.stopPropagation(); handleAvatarClick() }}
+                  >
                     <Camera size={11} color="#fff" />
                   </div>
                 </div>
+
                 <div>
                   <h1 className="pp-hero-name">
                     {user ? `${user.first_name ?? ''} ${user.last_name ?? ''}`.trim() || 'Your Name' : 'Loading…'}
@@ -574,19 +728,14 @@ const ProfilePage = () => {
                     {user?.email && <span>{user.email}</span>}
                     {pathLabel && <>
                       <span className="pp-hero-sep">·</span>
-                      <span className="pp-path-pill">
-                        <PathIcon size={10} />
-                        {pathLabel}
-                      </span>
+                      <span className="pp-path-pill"><PathIcon size={10} />{pathLabel}</span>
                     </>}
                   </div>
                 </div>
               </div>
 
               <div className="pp-btn-row">
-                {saved && (
-                  <span className="pp-saved"><Check size={12} /> Saved</span>
-                )}
+                {saved && <span className="pp-saved"><Check size={12} /> Saved</span>}
                 {editing ? (
                   <>
                     <button className="pp-edit-btn pp-edit-btn-cancel" onClick={() => { setEditing(false); setForm(user) }}>
@@ -604,7 +753,6 @@ const ProfilePage = () => {
               </div>
             </div>
 
-            {/* Stats */}
             <div className="pp-stats">
               <div className="pp-stat">
                 <div className="pp-stat-val">0</div>
@@ -619,13 +767,12 @@ const ProfilePage = () => {
                 <div className="pp-stat-label">Member since</div>
               </div>
             </div>
-
             <div className="pp-hero-line" />
           </div>
 
           {/* ── Tabs ── */}
           <div className="pp-tabs">
-            {['overview', 'academic', 'security'].map(t => (
+            {['overview','academic','security'].map(t => (
               <button
                 key={t}
                 className={`pp-tab ${activeTab === t ? 'active' : ''}`}
@@ -636,21 +783,18 @@ const ProfilePage = () => {
             ))}
           </div>
 
-          {/* ── Overview tab ── */}
+          {/* ── Overview ── */}
           {activeTab === 'overview' && (
             <div className="pp-card" style={{ animationDelay: '0.05s' }}>
-              <div className="pp-card-title">
-                <span className="pp-card-title-dot" />
-                Personal information
-              </div>
+              <div className="pp-card-title"><span className="pp-card-title-dot" />Personal information</div>
               <div className="pp-fields">
                 {[
-                  { key: 'first_name', label: 'First name', placeholder: 'Enter first name' },
-                  { key: 'last_name',  label: 'Last name',  placeholder: 'Enter last name'  },
-                  { key: 'email',      label: 'Email',      placeholder: 'your@email.com', type: 'email' },
-                  { key: 'phone',      label: 'Phone',      placeholder: '+1 (555) 000-0000' },
-                  { key: 'school',     label: 'School / Institution', placeholder: 'Your school name' },
-                  { key: 'grade',      label: 'Grade / Year', placeholder: 'e.g. 11th Grade' },
+                  { key:'first_name', label:'First name',           placeholder:'Enter first name'   },
+                  { key:'last_name',  label:'Last name',            placeholder:'Enter last name'    },
+                  { key:'email',      label:'Email',                placeholder:'your@email.com', type:'email' },
+                  { key:'phone',      label:'Phone',                placeholder:'+1 (555) 000-0000'  },
+                  { key:'school',     label:'School / Institution', placeholder:'Your school name'   },
+                  { key:'grade',      label:'Grade / Year',         placeholder:'e.g. 11th Grade'    },
                 ].map(({ key, label, placeholder, type = 'text' }) => (
                   <div className="pp-field" key={key}>
                     <label className="pp-field-label">{label}</label>
@@ -673,21 +817,18 @@ const ProfilePage = () => {
             </div>
           )}
 
-          {/* ── Academic tab ── */}
+          {/* ── Academic ── */}
           {activeTab === 'academic' && (
             <div className="pp-card" style={{ animationDelay: '0.05s' }}>
-              <div className="pp-card-title">
-                <span className="pp-card-title-dot" />
-                Academic profile
-              </div>
+              <div className="pp-card-title"><span className="pp-card-title-dot" />Academic profile</div>
               <div className="pp-fields">
                 {[
-                  { key: 'major',      label: 'Major / Field of interest', placeholder: 'e.g. Computer Science' },
-                  { key: 'gpa',        label: 'GPA',                        placeholder: 'e.g. 3.8' },
-                  { key: 'sat',        label: 'SAT / ACT score',            placeholder: 'e.g. 1480' },
-                  { key: 'grad_year',  label: 'Expected graduation',        placeholder: 'e.g. 2027' },
-                  { key: 'interests',  label: 'Career interests',           placeholder: 'e.g. Software engineering' },
-                  { key: 'activities', label: 'Extracurriculars',           placeholder: 'e.g. Robotics club, debate' },
+                  { key:'major',      label:'Major / Field',       placeholder:'e.g. Computer Science'    },
+                  { key:'gpa',        label:'GPA',                 placeholder:'e.g. 3.8'                 },
+                  { key:'sat',        label:'SAT / ACT score',     placeholder:'e.g. 1480'                },
+                  { key:'grad_year',  label:'Expected graduation', placeholder:'e.g. 2027'                },
+                  { key:'interests',  label:'Career interests',    placeholder:'e.g. Software engineering'},
+                  { key:'activities', label:'Extracurriculars',    placeholder:'e.g. Robotics club'       },
                 ].map(({ key, label, placeholder }) => (
                   <div className="pp-field" key={key}>
                     <label className="pp-field-label">{label}</label>
@@ -709,15 +850,14 @@ const ProfilePage = () => {
             </div>
           )}
 
-          {/* ── Security tab ── */}
+          {/* ── Security ── */}
           {activeTab === 'security' && (
             <div className="pp-card" style={{ animationDelay: '0.05s' }}>
-              <div className="pp-card-title">
-                <span className="pp-card-title-dot" />
-                Account & security
-              </div>
-              <div>
-                <div className="pp-security-row">
+              <div className="pp-card-title"><span className="pp-card-title-dot" />Account & security</div>
+
+              {/* ── Email row ── */}
+              <div className="pp-security-row" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
+                <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start' }}>
                   <div className="pp-sec-left">
                     <div className="pp-sec-icon"><Mail size={15} /></div>
                     <div>
@@ -725,50 +865,151 @@ const ProfilePage = () => {
                       <div className="pp-sec-sub">{user?.email || 'Not set'}</div>
                     </div>
                   </div>
-                  <button className="pp-sec-action">Change</button>
+                  <button
+                    className="pp-sec-action"
+                    onClick={() => { setShowEmailForm(v => !v); setEmailError(''); setEmailSuccess('') }}
+                  >
+                    {showEmailForm ? 'Cancel' : 'Change'}
+                  </button>
                 </div>
-                <div className="pp-security-row">
+
+                {showEmailForm && (
+                  <div className="pp-sec-form">
+                    <div className="pp-sec-form-row">
+                      <input
+                        className="pp-field-input"
+                        type="email"
+                        placeholder="New email address"
+                        value={emailForm.email}
+                        onChange={e => setEmailForm(f => ({ ...f, email: e.target.value }))}
+                      />
+                    </div>
+                    {emailError   && <div className="pp-sec-msg pp-sec-msg-error">{emailError}</div>}
+                    {emailSuccess && <div className="pp-sec-msg pp-sec-msg-success">{emailSuccess}</div>}
+                    <button
+                      className="pp-sec-submit"
+                      onClick={handleEmailChange}
+                      disabled={emailLoading}
+                    >
+                      {emailLoading
+                        ? <><Loader2 size={13} className="pp-spin" /> Saving…</>
+                        : <><Check size={13} /> Update email</>}
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* ── Password row ── */}
+              <div className="pp-security-row" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
+                <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start' }}>
                   <div className="pp-sec-left">
                     <div className="pp-sec-icon"><Shield size={15} /></div>
                     <div>
                       <div className="pp-sec-label">Password</div>
-                      <div className="pp-sec-sub">Last changed — never</div>
+                      <div className="pp-sec-sub">Change your account password</div>
                     </div>
                   </div>
-                  <button className="pp-sec-action">Update</button>
+                  <button
+                    className="pp-sec-action"
+                    onClick={() => { setPwError(''); setPwSuccess(''); setPwForm({ old_password:'', new_password:'', confirm:'' }) }}
+                    style={{ display: pwSuccess ? 'none' : undefined }}
+                  >
+                    Update
+                  </button>
                 </div>
-                <div className="pp-security-row">
-                  <div className="pp-sec-left">
-                    <div className="pp-sec-icon"><Calendar size={15} /></div>
-                    <div>
-                      <div className="pp-sec-label">Account status</div>
-                      <div className="pp-sec-sub">
-                        <span className="pp-status-dot" />
-                        Active
-                      </div>
+
+                {/* Password form is always visible in this section */}
+                <div className="pp-sec-form">
+                  {/* Current password */}
+                  <div className="pp-pw-wrap">
+                    <input
+                      className="pp-field-input"
+                      type={showOld ? 'text' : 'password'}
+                      placeholder="Current password"
+                      value={pwForm.old_password}
+                      onChange={e => setPwForm(f => ({ ...f, old_password: e.target.value }))}
+                    />
+                    <button className="pp-pw-eye" type="button" onClick={() => setShowOld(v => !v)}>
+                      {showOld ? <EyeOff size={15} /> : <Eye size={15} />}
+                    </button>
+                  </div>
+
+                  {/* New password */}
+                  <div className="pp-sec-form-row">
+                    <div className="pp-pw-wrap">
+                      <input
+                        className="pp-field-input"
+                        type={showNew ? 'text' : 'password'}
+                        placeholder="New password"
+                        value={pwForm.new_password}
+                        onChange={e => setPwForm(f => ({ ...f, new_password: e.target.value }))}
+                      />
+                      <button className="pp-pw-eye" type="button" onClick={() => setShowNew(v => !v)}>
+                        {showNew ? <EyeOff size={15} /> : <Eye size={15} />}
+                      </button>
+                    </div>
+
+                    {/* Confirm */}
+                    <div className="pp-pw-wrap">
+                      <input
+                        className="pp-field-input"
+                        type={showConfirm ? 'text' : 'password'}
+                        placeholder="Confirm new password"
+                        value={pwForm.confirm}
+                        onChange={e => setPwForm(f => ({ ...f, confirm: e.target.value }))}
+                      />
+                      <button className="pp-pw-eye" type="button" onClick={() => setShowConfirm(v => !v)}>
+                        {showConfirm ? <EyeOff size={15} /> : <Eye size={15} />}
+                      </button>
                     </div>
                   </div>
-                </div>
-                <div className="pp-security-row">
-                  <div className="pp-sec-left">
-                    <div className="pp-sec-icon"><LogOut size={15} /></div>
-                    <div>
-                      <div className="pp-sec-label">Sign out</div>
-                      <div className="pp-sec-sub">Sign out of your account on this device</div>
-                    </div>
-                  </div>
-                  <button className="pp-sec-action" style={{ color: 'rgba(239,68,68,0.75)' }} onClick={handleLogout}>
-                    Sign out
+
+                  {pwError   && <div className="pp-sec-msg pp-sec-msg-error">{pwError}</div>}
+                  {pwSuccess && <div className="pp-sec-msg pp-sec-msg-success">{pwSuccess}</div>}
+
+                  <button
+                    className="pp-sec-submit"
+                    onClick={handlePasswordChange}
+                    disabled={pwLoading}
+                  >
+                    {pwLoading
+                      ? <><Loader2 size={13} className="pp-spin" /> Saving…</>
+                      : <><Shield size={13} /> Update password</>}
                   </button>
                 </div>
               </div>
+
+              {/* ── Account status row ── */}
+              <div className="pp-security-row">
+                <div className="pp-sec-left">
+                  <div className="pp-sec-icon"><Calendar size={15} /></div>
+                  <div>
+                    <div className="pp-sec-label">Account status</div>
+                    <div className="pp-sec-sub"><span className="pp-status-dot" />Active</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* ── Sign out row ── */}
+              <div className="pp-security-row">
+                <div className="pp-sec-left">
+                  <div className="pp-sec-icon"><LogOut size={15} /></div>
+                  <div>
+                    <div className="pp-sec-label">Sign out</div>
+                    <div className="pp-sec-sub">Sign out of your account on this device</div>
+                  </div>
+                </div>
+                <button className="pp-sec-action pp-sec-action-danger" onClick={handleLogout}>
+                  Sign out
+                </button>
+              </div>
+
             </div>
           )}
-
         </div>
       </div>
     </>
   )
 }
 
-export default ProfilePage;
+export default ProfilePage
