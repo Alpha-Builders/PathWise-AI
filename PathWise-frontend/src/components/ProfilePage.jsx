@@ -84,7 +84,7 @@ const ProfilePage = () => {
     }
 
     const res = await fetch(api.updateUser, {
-      method: 'PUT',
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
