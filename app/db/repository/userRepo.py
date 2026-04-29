@@ -3,6 +3,8 @@ from db.models.models import User
 from db.schema.user import UserInCreate
 
 
+
+
 class UserRepository(BaseRepository): # To store user.
   def create_user(self, user_data: UserInCreate):
     new_user = User(**user_data) # This ensures no None Values available.

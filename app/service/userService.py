@@ -13,11 +13,13 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException
 
 
+
+
 class UserService:
     def __init__(self, session: Session):
         self.__userRepository = UserRepository(session=session)
 
-    # ───────────────────────── SIGNUP
+    # SIGNUP
     def signup(self, user_details: UserInCreate) -> UserWithToken:
         if self.__userRepository.user_exist_by_email(email=user_details.email):
             raise HTTPException(status_code=400, detail="User already exists")
