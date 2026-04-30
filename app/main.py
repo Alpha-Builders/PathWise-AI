@@ -20,13 +20,7 @@ def startup():
 
 origins = os.getenv("FRONTEND_URL", "http://localhost:5173").split(",")
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "PATCH", "OPTIONS"],
-    allow_headers=["Authorization", "Content-Type"],
-)
+
 
 # This it to Block X-CrossSite scripting.
 @app.middleware("http")
@@ -37,6 +31,16 @@ async def add_security_headers(request, call_next):
     response.headers["X-XSS-Protection"] = "1; mode=block"
     response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
     return response
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "PATCH", "OPTIONS", "DELETE"],
+    allow_headers=["Authorization", "Content-Type"],
+)
+
+
 
 @app.get("/")
 def read_root():
